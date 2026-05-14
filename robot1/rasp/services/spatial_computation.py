@@ -1,8 +1,7 @@
-"""Spatial computation service for packing and decoding LoRa data."""
+"""Spatial computation service for text LoRa data."""
 
 from __future__ import annotations
 
-import struct
 from typing import TYPE_CHECKING
 
 from loggerplusplus import LogLevels, log
@@ -15,9 +14,7 @@ if TYPE_CHECKING:
     from common.arena.base_arena.arena import BaseArena
     from geometry import OrientedPoint
 
-HEADER_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER["format"]
-HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
-
+HEADER_FIELDS = 9
 XY_FACTOR = CONFIG.SPATIAL_COMPUTATION_HEADER["xy_factor"]
 ANGLE_FACTOR = CONFIG.SPATIAL_COMPUTATION_HEADER["angle_factor"]
 
@@ -50,14 +47,6 @@ class SpatialComputation:
         self.robot_position: tuple[float, float, float] | None = None
         self.enemy_position: tuple[float, float, float] | None = None
         self.enemy_velocity: tuple[float, float, float] | None = None
-
-    @staticmethod
-    def _enc_xy(v: float) -> int:
-        return round(v * XY_FACTOR)
-
-    @staticmethod
-    def _enc_angle(v: float) -> int:
-        return round(v * ANGLE_FACTOR)
 
     @staticmethod
     def _dec_xy(v: int) -> float:
@@ -101,23 +90,6 @@ class SpatialComputation:
         )
         return self.enemy_velocity
 
-    def _pack_header(self) -> bytes:
-        rx, ry, rtheta = self.get_robot_position()
-        ex, ey, etheta = self.get_enemy_position()
-        evx, evy, espeed = self.get_enemy_velocity()
-        return struct.pack(
-            HEADER_FORMAT,
-            self._enc_xy(rx),
-            self._enc_xy(ry),
-            self._enc_angle(rtheta),
-            self._enc_xy(ex),
-            self._enc_xy(ey),
-            self._enc_angle(etheta),
-            self._enc_xy(evx),
-            self._enc_xy(evy),
-            self._enc_xy(espeed),
-        )
-
     def _unpack_header(self, unpacked: tuple) -> dict[str, object]:
         self.robot_position = (
             self._dec_xy(unpacked[0]),
@@ -142,7 +114,7 @@ class SpatialComputation:
 
     @log("SpatialComputation", LogLevels.DEBUG)
     def send_data(self, data) -> None:
-        """Send the packed header over LoRa."""
+        """Send text data over LoRa."""
         self.lora.send(data)
 
     @log("SpatialComputation", LogLevels.DEBUG)
@@ -153,5 +125,18 @@ class SpatialComputation:
             dict[str, object]: Unpacked header fields as a dictionary.
         """
         data = self.lora.receive()
-        unpacked = struct.unpack(HEADER_FORMAT, data)
+        if data is None:
+            return {}
+
+        values = data.split("|")
+        if len(values) != HEADER_FIELDS:
+            self.logger.warning(f"Ignoring invalid LoRa header size: {len(values)}")
+            return {}
+
+        try:
+            unpacked = tuple(int(value) for value in values)
+        except ValueError:
+            self.logger.warning(f"Ignoring invalid LoRa header format: {data}")
+            return {}
+
         return self._unpack_header(unpacked)
