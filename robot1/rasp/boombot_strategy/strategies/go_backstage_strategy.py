@@ -33,12 +33,12 @@ class GoBackstageStrategy(BaseStrategy):
 
         forward = BaseTaskNode(
             name="Move Forward",
-            tasks=RelativeForward(distance=20.0),
+            tasks=RelativeForward(distance=40.0),
         )
 
         backward = BaseTaskNode(
             name="Move Backward",
-            tasks=RelativeBackward(distance=20.0),
+            tasks=RelativeBackward(distance=40.0),
         )
 
         # Connect the subgraphs in execution order
