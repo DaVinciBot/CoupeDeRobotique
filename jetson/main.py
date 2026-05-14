@@ -212,43 +212,63 @@ def group_kapla_by_zone(detected_world, tolerance):
     return zoned, unzoned
 
 
+_XY_FACTOR = 10.0
+_ANGLE_FACTOR = 1000.0
+_NUM_CRATES = 32
+_HEADER_FIELDS = 9
+_PACKET_FIELDS = _HEADER_FIELDS + _NUM_CRATES * 4  # 137
+
+
+def _enc_xy(meters):
+    """Encode meters → rasp cm integer (cm * XY_FACTOR)."""
+    return round(float(meters) * 100.0 * _XY_FACTOR)
+
+
+def _enc_angle(radians):
+    """Encode radians → rasp integer (rad * ANGLE_FACTOR)."""
+    return round(float(radians) * _ANGLE_FACTOR)
+
+
 def build_lora_message(detected_world, robot_speeds, tolerance):
-    """Construit le message vision (cmd 5) sur une seule ligne.
+    """Construit le paquet compatible rasp : 137 entiers séparés par '|'.
 
-    Format: `5|R|id|x|y|deg|speed|...|Z|zone|c|x|y|deg|...|U|x|y|deg|...\\n`
-    Les tokens R/Z/U délimitent les enregistrements côté récepteur.
+    Format: 9 header + 32 crates × 4 champs = 137 entiers.
+    Header: rx, ry, rtheta, ex, ey, etheta, evx, evy, espeed
+    Crate:  zone_id, x_enc, y_enc, color_id (0=bleu, 1=jaune, 2=vide)
     """
-    parts = ["5"]
+    robot = [0, 0, 0]
+    enemy = [0, 0, 0]
 
-    # Robots
     for marker_id, pos, yaw in detected_world:
-        if marker_id in (ROBOT_MARKER_ID, ENEMY_MARKER_ID):
-            speed = robot_speeds.get(marker_id, 0.0)
-            deg = math.degrees(yaw)
-            parts.extend([
-                "R",
-                str(marker_id),
-                f"{pos[0]:.3f}",
-                f"{pos[1]:.3f}",
-                f"{deg:.1f}",
-                f"{speed:.2f}",
-            ])
+        if marker_id == ROBOT_MARKER_ID:
+            robot = [_enc_xy(pos[0]), _enc_xy(pos[1]), _enc_angle(yaw)]
+        elif marker_id == ENEMY_MARKER_ID:
+            enemy = [_enc_xy(pos[0]), _enc_xy(pos[1]), _enc_angle(yaw)]
 
-    # Kapla groupés par zone
-    zoned, unzoned = group_kapla_by_zone(detected_world, tolerance)
-    for zone_id in sorted(zoned.keys()):
-        for color in ("B", "Y"):
-            for x, y, deg in zoned[zone_id][color]:
-                parts.extend([
-                    "Z",
-                    str(zone_id),
-                    color,
-                    f"{x:.3f}",
-                    f"{y:.3f}",
-                    f"{deg:.1f}",
-                ])
-    for x, y, deg in unzoned:
-        parts.extend(["U", f"{x:.3f}", f"{y:.3f}", f"{deg:.1f}"])
+    enemy_speed = robot_speeds.get(ENEMY_MARKER_ID, 0.0)
+    header = robot + enemy + [0, 0, _enc_xy(enemy_speed)]
+
+    color_map = {
+        BLUE_CRATE_MARKER_ID: 0,
+        YELLOW_CRATE_MARKER_ID: 1,
+        EMPTY_CRATE_MARKER_ID: 2,
+    }
+    crates = []
+    for marker_id, pos, _yaw in detected_world:
+        if marker_id not in color_map:
+            continue
+        x_m, y_m = float(pos[0]), float(pos[1])
+        zone_id = find_zone_for_kapla(x_m, y_m, tolerance)
+        crates.append((zone_id, _enc_xy(x_m), _enc_xy(y_m), color_map[marker_id]))
+        if len(crates) >= _NUM_CRATES:
+            break
+
+    while len(crates) < _NUM_CRATES:
+        crates.append((0, 0, 0, 0))
+
+    parts = [str(v) for v in header]
+    for zone_id, x_enc, y_enc, color in crates:
+        parts.extend([str(zone_id), str(x_enc), str(y_enc), str(color)])
 
     return "|".join(parts) + "\n"
 
