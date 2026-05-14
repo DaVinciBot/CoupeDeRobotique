@@ -41,6 +41,8 @@ from sensors import LidarError
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
+NORMAL_MATCH_TIMEOUT_S = 100.0
+
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
@@ -210,6 +212,9 @@ class MainBrain(Brain):
             while not self.jack_triggered:  # wait for the trigger event
                 time.sleep(0.1)
 
+            match_start_time = time.monotonic()
+            normal_match_timeout_sent = False
+
             # --- 3) Build the strategy --- #
             init_stage = "strategy creation"
             if self.mode == "iihm":
@@ -237,6 +242,11 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
+        normal_match_timed_out = (
+            self.mode == "normal"
+            and time.monotonic() - match_start_time >= NORMAL_MATCH_TIMEOUT_S
+        )
+
         context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
@@ -244,7 +254,20 @@ class MainBrain(Brain):
             point=self.score,
         )
 
-        if strategy:
+        if normal_match_timed_out:
+            action_holder[0] = None
+            if not normal_match_timeout_sent:
+                self.logger.info(
+                    "[BRAIN:Match] Normal mode timeout reached; stopping robot.",
+                )
+                rolling_basis.set_target_position(rolling_basis.odometrie)
+                rolling_basis.set_motors_pwm(
+                    left_pwm=0,
+                    right_pwm=0,
+                    duration_ms=100,
+                )
+                normal_match_timeout_sent = True
+        elif strategy:
             strategy.runner.handle(context)
         else:
             if self.should_update_task:
@@ -362,12 +385,17 @@ class MainBrain(Brain):
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
 
-        if self.should_send_direct_pwm:
+        if self.should_send_direct_pwm and not normal_match_timed_out:
             action_holder[0] = None
             rolling_basis.set_motors_pwm(
                 left_pwm=self.direct_pwm_left,
                 right_pwm=self.direct_pwm_right,
                 duration_ms=self.direct_pwm_duration_ms,
+            )
+            self.should_send_direct_pwm = False
+        elif self.should_send_direct_pwm and normal_match_timed_out:
+            self.logger.warning(
+                "[BRAIN:Match] Ignoring direct PWM request after normal mode timeout.",
             )
             self.should_send_direct_pwm = False
 

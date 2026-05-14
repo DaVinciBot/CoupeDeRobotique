@@ -8,6 +8,7 @@ from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
+from boombot_strategy.tasks.navigation_tasks.maneuver import RelativeForward, RelativeRotation, RelativeBackward
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
@@ -30,13 +31,18 @@ class GoBackstageStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        go_to_backstage = BaseTaskNode(
-            name="[End] Go to backstage",
-            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"], ctx),
+        forward = BaseTaskNode(
+            name="Move Forward",
+            tasks=RelativeForward(distance=20.0),
+        )
+
+        backward = BaseTaskNode(
+            name="Move Backward",
+            tasks=RelativeBackward(distance=20.0),
         )
 
         # Connect the subgraphs in execution order
-        self._auto_build_transitions(go_to_backstage)
+        self._auto_build_transitions(forward, backward)
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
@@ -44,5 +50,5 @@ class GoBackstageStrategy(BaseStrategy):
                 identifier="GoBackstageStrategy",
                 follow_logger_manager_rules=True,
             ),
-            start=go_to_backstage,
+            start=forward,
         )
