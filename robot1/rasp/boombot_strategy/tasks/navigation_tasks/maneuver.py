@@ -74,10 +74,10 @@ class RelativeForward(NavigationTask):
             path_planner_params=DeltaPathPlannerParams(distance=distance),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=NoAvoidanceParams(),
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                10,
-                35,
+                55,
+                90,
             ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
         )

@@ -61,6 +61,11 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
         self.acs_detector = AcsDetectionProfileFactory.instantiate(
             params=acs_detection_profile_params,
         )
+        self._logger.debug(
+            "[NAV:Avoid] Initialized "
+            f"{self.__class__.__name__} with "
+            f"{self.acs_detector.__class__.__name__}",
+        )
 
         self.state: AvoidanceState = AvoidanceState.IDLE
         self._avoiding_start_time: float | None = None  # Timeout timer
