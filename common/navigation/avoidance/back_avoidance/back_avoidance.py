@@ -169,8 +169,10 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self._logger.debug(f"[NAV:Avoid] Replanning from: {position}")
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
-            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
-            current_navigator_task.trajectory_planner.start_planning()
+            cmd = current_navigator_task.start_replanned_trajectory(
+                new_path,
+                position,
+            )
 
             self._logger.debug("[NAV:Avoid] Trajectory planner clock reset")
             # reset timer just for logging/manure measurement
@@ -178,13 +180,9 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self._logger.debug("[NAV:Avoid] Timer reset")
 
             self.state = AvoidanceState.IDLE
-            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self._logger.info("[NAV:Avoid] Complete - resuming normal operation")
-            return cast(
-                "TrajectoryPlanCommand",
-                current_navigator_task.current_trajectory_command,
-            )  # Avoidance complete, continue as normal
+            return cmd
 
         # 4. Continue with current command
         self._logger.debug("[NAV:Avoid] No action required - continuing trajectory")

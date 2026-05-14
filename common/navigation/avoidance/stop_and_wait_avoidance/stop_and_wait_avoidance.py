@@ -78,11 +78,13 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self._logger.warning("[NAV:Avoid] Timeout reached - aborting task")
             return self._abort(current_navigator_task, position)
 
+        is_obstacle_detected = self.acs_detector.is_acs_triggered(
+            ally_zone,
+            enemy_zone,
+        )
+
         # 2. Obstacle detected: begin avoidance
-        if (
-            self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
-            and self.state == AvoidanceState.IDLE
-        ):
+        if is_obstacle_detected and self.state == AvoidanceState.IDLE:
             distance = ally_zone.point.distance(enemy_zone.point)
             self._logger.warning(
                 f"[NAV:Avoid] Obstacle detected at {distance:.1f}cm - stopping robot",
@@ -96,11 +98,14 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self._start_timer()
             return cmd
 
+        if is_obstacle_detected and self.state == AvoidanceState.AVOIDING:
+            self._logger.debug("[NAV:Avoid] Obstacle still present - keeping stop")
+            cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
+            current_navigator_task.current_trajectory_command = cmd
+            return cmd
+
         # 3. Obstacle cleared: finish avoidance
-        if (
-            self.state == AvoidanceState.AVOIDING
-            and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
-        ):
+        if self.state == AvoidanceState.AVOIDING:
             self._logger.info("[NAV:Avoid] Obstacle cleared - replanning trajectory")
 
             # Obstacle is no longer detected, replan from current position
@@ -113,19 +118,17 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self._logger.debug(f"[NAV:Avoid] Replanning from updated start: {position}")
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
-            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
-            current_navigator_task.trajectory_planner.start_planning()
+            cmd = current_navigator_task.start_replanned_trajectory(
+                new_path,
+                position,
+            )
 
             self._reset_timer()
 
             self.state = AvoidanceState.IDLE
-            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self._logger.info("[NAV:Avoid] Resuming normal navigation")
-            return cast(
-                "TrajectoryPlanCommand",
-                current_navigator_task.current_trajectory_command,
-            )  # Avoidance complete, continue as normal
+            return cmd
 
         # 4. Continue with original trajectory
         return cast(

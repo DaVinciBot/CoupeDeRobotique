@@ -118,6 +118,25 @@ class NavigatorTask:
         )
         return self.current_trajectory_command
 
+    def start_replanned_trajectory(
+        self,
+        path: list[OrientedPoint],
+        current_position: OrientedPoint,
+    ) -> TrajectoryPlanCommand:
+        self._planned_goal = path[-1] if path else current_position
+        self.trajectory_planner.plan_trajectory(path)
+        self.trajectory_planner.start_planning()
+        self._start_time = time.time()
+        self._stabilization_start_time = None
+        self.state = NavigatorTaskState.IN_PROGRESS
+
+        planned_cmd = self.trajectory_planner.get_plan()
+        self.current_trajectory_command = self._command_from_current_position(
+            planned_cmd,
+            current_position,
+        )
+        return self.current_trajectory_command
+
     def _is_goal_reached(self, current_position: OrientedPoint) -> bool:
         goal = self._planned_goal or self.params.goal
         if goal is None:
@@ -238,6 +257,13 @@ class NavigatorTask:
 
         if self._has_timed_out():
             return self._abort(ally_zone.point)
+
+        if self.state == NavigatorTaskState.AVOIDING:
+            return self.avoidance.handle(
+                current_navigator_task=self,
+                ally_zone=ally_zone,
+                enemy_zone=enemy_zone,
+            )
 
         planned_cmd = self.trajectory_planner.get_plan()
         cmd = self._command_from_current_position(planned_cmd, ally_zone.point)
