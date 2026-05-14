@@ -1,6 +1,7 @@
 """Module de détection ArUco pour Jetson."""
 
 import math
+import threading
 import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
@@ -99,6 +100,8 @@ class ArucoDetector:
 
         # Thread pool pour détection parallèle des tuiles
         self._tile_pool = ThreadPoolExecutor(max_workers=4)
+        # Thread-local GpuMat pour éviter les allocations GPU répétées dans les tiles
+        self._tile_gpu_local = threading.local()
 
         # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
         self.multiscale_enabled = True
@@ -118,6 +121,10 @@ class ArucoDetector:
             list(range(1, 11))  # Robots (bleu 1-5, jaune 6-10)
             + [20, 21, 22, 23]  # Références (ont leur propre cache)
         )
+
+        # Arena display : afficher toutes les N frames pour réduire la charge
+        self._arena_frame_skip = 5
+        self._arena_frame_counter = 0
 
         self._init_warmup_state()
 
@@ -781,9 +788,11 @@ class ArucoDetector:
         tile = gray[oy : oy + tile_h, ox : ox + tile_w]
         # Upscale 2x sur GPU si disponible, sinon CPU
         if self.use_cuda:
-            gpu_tile = cv2.cuda_GpuMat()
-            gpu_tile.upload(tile)
-            gpu_up = cv2.cuda.resize(gpu_tile, (tile_w * 2, tile_h * 2))
+            local = self._tile_gpu_local
+            if not hasattr(local, "gpu_tile"):
+                local.gpu_tile = cv2.cuda_GpuMat()
+            local.gpu_tile.upload(tile)
+            gpu_up = cv2.cuda.resize(local.gpu_tile, (tile_w * 2, tile_h * 2))
             tile_up = gpu_up.download()
         else:
             tile_up = cv2.resize(
@@ -888,7 +897,8 @@ class ArucoDetector:
                 marks.append((label, (now - t_prev) * 1000.0))
                 t_prev = now
 
-        # Preprocessing GPU si disponible, sinon CPU
+        # Preprocessing + downscale : chaîné sur GPU si disponible
+        ds = self.detect_downscale if self.detect_downscale > 1.0 else 1.0
         if self.use_cuda:
             self._gpu_mat.upload(frame)
             if frame.ndim == 3:
@@ -896,7 +906,17 @@ class ArucoDetector:
             else:
                 gpu_gray = self._gpu_mat
             gpu_gray = self.clahe_cuda.apply(gpu_gray, cv2.cuda.Stream.Null())
-            gray = gpu_gray.download()
+            # Downscale sur GPU avant download (1 seul transfert)
+            if ds > 1.0:
+                new_w = int(frame.shape[1] / ds)
+                new_h = int(frame.shape[0] / ds)
+                gpu_gray = cv2.cuda.resize(gpu_gray, (new_w, new_h))
+            gray_det = gpu_gray.download()
+            # On a aussi besoin du gray full-res pour les annotations
+            if ds > 1.0:
+                gray = None  # pas besoin du gray full-res si pas d'annotations
+            else:
+                gray = gray_det
         else:
             gray = (
                 frame
@@ -907,21 +927,13 @@ class ArucoDetector:
                 )
             )
             gray = self.clahe.apply(gray)
-        mark("preproc (gray+CLAHE)")
-
-        # Downscale pour accélérer detectMarkers (coins reprojetés ensuite)
-        ds = max(1, int(self.detect_downscale))
-        if ds > 1:
-            gray_det = cv2.resize(
-                gray,
-                None,
-                fx=1.0 / ds,
-                fy=1.0 / ds,
-                interpolation=cv2.INTER_AREA,
-            )
-        else:
-            gray_det = gray
-        mark(f"downscale x{ds}")
+            if ds > 1.0:
+                new_w = int(gray.shape[1] / ds)
+                new_h = int(gray.shape[0] / ds)
+                gray_det = cv2.resize(gray, (new_w, new_h), interpolation=cv2.INTER_AREA)
+            else:
+                gray_det = gray
+        mark(f"preproc+downscale x{ds:.1f}")
 
         # Détection ArUco (multi-échelle si activée)
         if self.multiscale_enabled:
@@ -936,15 +948,18 @@ class ArucoDetector:
             mark("detect single-scale")
 
         # Reprojection des coins dans la résolution d'origine
-        if ds > 1 and corners:
+        if ds > 1.0 and corners:
             corners = tuple(c * float(ds) for c in corners)
 
         if ids is None:
             if show_arena:
-                self.update_arena_display(
-                    detected_world=[],
-                    window_name=arena_window_name,
-                )
+                self._arena_frame_counter += 1
+                if self._arena_frame_counter >= self._arena_frame_skip:
+                    self._arena_frame_counter = 0
+                    self.update_arena_display(
+                        detected_world=[],
+                        window_name=arena_window_name,
+                    )
                 mark("arena (no ids)")
             if dbg:
                 self._print_marks(marks, "analyze_frame[no_ids]")
@@ -1083,12 +1098,15 @@ class ArucoDetector:
         mark("carry-forward")
 
         if show_arena:
-            try:
-                self.update_arena_display(
-                    detected_world=detected_world, window_name=arena_window_name
-                )
-            except Exception:
-                pass
+            self._arena_frame_counter += 1
+            if self._arena_frame_counter >= self._arena_frame_skip:
+                self._arena_frame_counter = 0
+                try:
+                    self.update_arena_display(
+                        detected_world=detected_world, window_name=arena_window_name
+                    )
+                except Exception:
+                    pass
             mark("update_arena_display")
 
         if dbg:
