@@ -218,6 +218,12 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
                 arena=self.arena,
+                lora=LoraCom(
+                        logger=LogLogger(
+                        identifier="LoraCom",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
             )
 
         self.shared_crates = crates_to_dict(sc.crates)
@@ -266,16 +272,10 @@ class MainBrain(Brain):
 
         self.should_send_start = True
         self.status = "starting"
-        """lora = LoraCom(
-            logger=LogLogger(
-                identifier="LoraCom",
-                follow_logger_manager_rules=True,
-            ),
-        )"""
+        # send team color
+        sc.send_data("4|" + ("Y" if self.arena.team_color == TeamColor.YELLOW else "B"))
 
         # --- MetaProg is insane (loop) --- #
-
-        # lora.receive()
         sc.receive_data()
         self.shared_crates = crates_to_dict(sc.crates)
         self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)

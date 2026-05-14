@@ -50,11 +50,12 @@ class LoraCom:
             f"[LoraCom] [2/4] Readable: {results['port_readable']} | Writable: {results['port_writable']}"
         )
 
-        PING = b"\xAA\x55\x50\x49\x4E\x47"
+        PING = "PING"
         try:
-            written = self.ser.write(PING)
+            payload = PING.encode()
+            written = self.ser.write(payload)
             self.ser.flush()
-            results["send_ok"] = written == len(PING)
+            results["send_ok"] = written == len(payload)
         except (SerialException, OSError) as exc:
             self.logger.error(f"[LoraCom] [3/4] Send failed: {exc}")
             results["send_ok"] = False
@@ -77,26 +78,27 @@ class LoraCom:
         self.logger.info(f"[LoraCom] Overall: {'PASS !' if all_ok else 'FAIL :('}")
         return all_ok
 
-    def send(self, data: bytes) -> bool:
+    def send(self, data: str) -> bool:
         """Send data over the serial link.
 
         Args:
-            data (bytes): Raw payload to transmit.
+            data (str): Text payload to transmit.
 
         Returns:
             bool: True when all bytes are written, False otherwise.
         """
         try:
-            written = self.ser.write(data)
+            payload = data.encode()
+            written = self.ser.write(payload)
             self.ser.flush()
         except (SerialException, OSError) as exc:
             self.logger.error(f"[LoraCom] Error send: {exc}")
             return False
 
-        self.logger.info(f"[LoraCom] Sent {written} bytes: {data.hex()}")
-        return written == len(data)
+        self.logger.info(f"[LoraCom] Sent {written} bytes: {data}")
+        return written == len(payload)
 
-    def receive(self, size: int | None = None) -> bytes | None:
+    def receive(self, size: int | None = None) -> str | None:
         """Receive data from the serial link.
 
         Args:
@@ -104,7 +106,7 @@ class LoraCom:
                 all available bytes. Defaults to None.
 
         Returns:
-            bytes | None: The received payload, or None if nothing is available.
+            str | None: The received payload, or None if nothing is available.
         """
         self.logger.info("[LoraCom] Checking for incoming data...")
         try:
@@ -123,8 +125,9 @@ class LoraCom:
             self.logger.error(f"[LoraCom] Error receive: {exc}")
             return None
 
-        self.logger.info(f"[LoraCom] Received {len(data)} bytes: {data.hex()}")
-        return data
+        text = data.decode().strip()
+        self.logger.info(f"[LoraCom] Received {len(data)} bytes: {text}")
+        return text
 
     def close(self) -> None:
         """Close the serial connection if it is open."""

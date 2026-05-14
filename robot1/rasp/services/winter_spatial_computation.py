@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-import struct
 from typing import TYPE_CHECKING, override
 
 from loggerplusplus import LogLevels, log
 from services.spatial_computation import SpatialComputation
 from stuff import Crate
-
-from a_config_loader import CONFIG
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -18,9 +15,9 @@ if TYPE_CHECKING:
     from arena.base_arena.arena import BaseArena
 
 NUM_CRATES = 32
-CRATE_FORMAT = "b2hB"
-
-PACKET_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER_FORMAT + CRATE_FORMAT * NUM_CRATES
+HEADER_FIELDS = 9
+FIELDS_PER_CRATE = 4
+PACKET_FIELDS = HEADER_FIELDS + NUM_CRATES * FIELDS_PER_CRATE
 
 
 class WinterSpatialComputation(SpatialComputation):
@@ -80,17 +77,27 @@ class WinterSpatialComputation(SpatialComputation):
             return {"crates": self.crates}
 
         data = self.lora.receive()
-        unpacked = struct.unpack(PACKET_FORMAT, data)
+        if data is None:
+            return {"crates": self.crates}
+
+        values = data.split("|")
+        if len(values) != PACKET_FIELDS:
+            self.logger.warning(f"Ignoring invalid LoRa packet size: {len(values)}")
+            return {"crates": self.crates}
+
+        try:
+            unpacked = tuple(int(value) for value in values)
+        except ValueError:
+            self.logger.warning(f"Ignoring invalid LoRa packet format: {data}")
+            return {"crates": self.crates}
 
         result = self._unpack_header(unpacked)
 
         self.crates = {}
-        offset = 9
-        fields_per_crate = 4
 
         for i in range(NUM_CRATES):
-            base = offset + i * fields_per_crate
-            zone_id, x_enc, y_enc, color = unpacked[base: base + fields_per_crate]
+            base = HEADER_FIELDS + i * FIELDS_PER_CRATE
+            zone_id, x_enc, y_enc, color = unpacked[base: base + FIELDS_PER_CRATE]
             zone_id = int(zone_id)
             crate = Crate(zone_id, self._dec_xy(x_enc), self._dec_xy(y_enc), int(color))
             self.crates.setdefault(zone_id, []).append(crate)

@@ -141,9 +141,9 @@ class SpatialComputation:
         }
 
     @log("SpatialComputation", LogLevels.DEBUG)
-    def send_data(self) -> None:
+    def send_data(self, data) -> None:
         """Send the packed header over LoRa."""
-        self.lora.send(self._pack_header())
+        self.lora.send(data)
 
     @log("SpatialComputation", LogLevels.DEBUG)
     def receive_data(self) -> dict[str, object]:

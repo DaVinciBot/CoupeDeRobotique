@@ -302,7 +302,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
     def send_data(self) -> None:
         """Dummy method to send data. Logs the action without transmitting anything."""
         if self.lora is not None:
-            self.lora.send(b"Hello from WinterSpatialComputationDummy!")
+            self.lora.send("Hello from WinterSpatialComputationDummy!")
         else:
             self.logger.info(
                 "WinterSpatialComputationDummy: Simulating sending data to LoRa module.",
