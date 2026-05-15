@@ -1,5 +1,6 @@
 #include "blocking_forward.h"
 #include "blocking_turn.h"
+#include "actionneur_sweep.h"
 #include "config.h"
 #include "go_to.h"
 #include "lidar_pami.h"
@@ -243,9 +244,8 @@ void setup() {
 #endif
 
     // rollingBasis->moveForwardBlocking(100.0f);
-    strategy->addAction(new BlockingForward(rollingBasis, 300.0f));
-    strategy->addAction(new GoTo(rollingBasis, Point{300.0f, 0.0f, 1.5708f}));
-    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f));
+    strategy->addAction(new BlockingForward(rollingBasis, 1400.0f));
+    strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
     strategy->start();
 
     strategyRunning = true;
