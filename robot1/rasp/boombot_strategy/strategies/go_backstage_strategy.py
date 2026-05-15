@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import time
 from typing import TYPE_CHECKING
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
@@ -13,6 +14,7 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.tasks import BaseTask
 
 if TYPE_CHECKING:
     from boombot_strategy.winter_game_context import WinterGameContext
@@ -20,6 +22,42 @@ if TYPE_CHECKING:
 POSITION_TOLERANCE_CM = 0.9
 ANGLE_TOLERANCE_RAD = 0.15
 FINISH_AFTER_EXPECTED_END_DELAY_S = 15.0
+END_START_DELAY_S = 90.0
+
+
+class _StrategyTimer:
+    """Shared monotonic timer for this strategy instance."""
+
+    def __init__(self) -> None:
+        self.start_time_s: float | None = None
+
+
+class _MarkStrategyStart(BaseTask["WinterGameContext"]):
+    """Record the actual strategy start time."""
+
+    def __init__(self, timer: _StrategyTimer) -> None:
+        super().__init__(estimated_duration=0.0, points=0)
+        self._timer = timer
+
+    def handle(self, _ctx: WinterGameContext) -> bool:
+        if self._timer.start_time_s is None:
+            self._timer.start_time_s = time.monotonic()
+        return True
+
+
+class _WaitUntilStrategyElapsed(BaseTask["WinterGameContext"]):
+    """Wait until the strategy has been running for the requested duration."""
+
+    def __init__(self, timer: _StrategyTimer, duration_s: float) -> None:
+        super().__init__(estimated_duration=duration_s, points=0)
+        self._timer = timer
+        self._duration_s = duration_s
+
+    def handle(self, _ctx: WinterGameContext) -> bool:
+        if self._timer.start_time_s is None:
+            self._timer.start_time_s = time.monotonic()
+
+        return time.monotonic() - self._timer.start_time_s >= self._duration_s
 
 
 class GoBackstageStrategy(BaseStrategy):
@@ -38,14 +76,19 @@ class GoBackstageStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
+        strategy_timer = _StrategyTimer()
+
         forward = BaseTaskNode(
             name="Move Forward",
-            tasks=RelativeForward(
-                distance=85.0,
-                position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
-                angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
-                finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
-            ),
+            tasks=[
+                _MarkStrategyStart(strategy_timer),
+                RelativeForward(
+                    distance=85.0,
+                    position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
+                    angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                    finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
+                ),
+            ],
         )
 
         turn1 = BaseTaskNode(
@@ -61,7 +104,7 @@ class GoBackstageStrategy(BaseStrategy):
         forward2 = BaseTaskNode(
             name="Move Forward",
             tasks=RelativeForward(
-                distance=10.5,
+                distance=12,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -78,6 +121,11 @@ class GoBackstageStrategy(BaseStrategy):
             ),  # 90 degrees
         )
 
+        wait_before_end = BaseTaskNode(
+            name="Wait Before End",
+            tasks=_WaitUntilStrategyElapsed(strategy_timer, END_START_DELAY_S),
+        )
+
         end = BaseTaskNode(
             name="End",
             tasks=RelativeForward(
@@ -89,7 +137,14 @@ class GoBackstageStrategy(BaseStrategy):
         )
 
         # Connect the subgraphs in execution order
-        self._auto_build_transitions(forward, turn1, forward2, turn2, end)
+        self._auto_build_transitions(
+            forward,
+            turn1,
+            forward2,
+            turn2,
+            wait_before_end,
+            end,
+        )
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
