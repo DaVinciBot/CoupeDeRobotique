@@ -42,6 +42,18 @@ from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
 NORMAL_MATCH_TIMEOUT_S = 100.0
+ZERO_PID = {"kp": 0.0, "ki": 0.0, "kd": 0.0}
+
+
+def set_zero_pids(rolling_basis: RollingBasis | RollingBasisDummy) -> None:
+    """Disable all rolling basis PID controllers."""
+    rolling_basis.set_pids(
+        linear_position_pid=ZERO_PID,
+        angular_position_pid=ZERO_PID,
+        left_wheel_position_pid=ZERO_PID,
+        right_wheel_position_pid=ZERO_PID,
+    )
+
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
@@ -173,9 +185,9 @@ class MainBrain(Brain):
                     ),
                 )
 
-            init_stage = "rolling basis PID initialization"
+            init_stage = "rolling basis PID disable before jack plug"
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-            rolling_basis.initialize_pids()
+            set_zero_pids(rolling_basis)
 
             init_stage = "actuators setup"
             if CONFIG.ACTUATORS_DUMMY:
