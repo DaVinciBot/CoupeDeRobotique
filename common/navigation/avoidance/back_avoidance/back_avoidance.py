@@ -17,6 +17,10 @@ from navigation.navigator.task import (
     NavigatorTaskParams,
     NavigatorTaskState,
 )
+from navigation.navigator.task.navigator_task_params import (
+    DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+    DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+)
 from navigation.path_planner import Direction
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
@@ -110,6 +114,8 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                     goal=None,
                     timeout=None,
                     stabilization_delay=0.0,
+                    position_reached_tolerance_cm=DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+                    angle_reached_tolerance_rad=DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
                     path_planner_params=DeltaPathPlannerParams(
                         distance=self.params.backward_distance,
                     ),

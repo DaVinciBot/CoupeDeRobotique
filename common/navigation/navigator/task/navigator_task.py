@@ -14,8 +14,6 @@ from navigation.trajectory_planner import (
 )
 
 TRACKING_LOOKAHEAD_S = 0.25
-POSITION_REACHED_TOLERANCE_CM = 1.0
-ANGLE_REACHED_TOLERANCE_RAD = 0.05
 SPEED_EPSILON = 1e-9
 
 if TYPE_CHECKING:
@@ -142,7 +140,7 @@ class NavigatorTask:
         if goal is None:
             return False
 
-        if current_position.distance(goal) > POSITION_REACHED_TOLERANCE_CM:
+        if current_position.distance(goal) > self.params.position_reached_tolerance_cm:
             return False
 
         if current_position.theta is None or goal.theta is None:
@@ -150,7 +148,7 @@ class NavigatorTask:
 
         return (
             abs(self._normalize_angle(goal.theta - current_position.theta))
-            <= ANGLE_REACHED_TOLERANCE_RAD
+            <= self.params.angle_reached_tolerance_rad
         )
 
     def _is_finished(self, current_position: OrientedPoint) -> bool:

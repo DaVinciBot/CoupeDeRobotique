@@ -30,7 +30,12 @@ if TYPE_CHECKING:
 class RelativeBackward(NavigationTask):
     """Navigation task to move the robot a specified distance backward."""
 
-    def __init__(self, distance: float) -> None:
+    def __init__(
+        self,
+        distance: float,
+        position_reached_tolerance_cm: float = 1.0,
+        angle_reached_tolerance_rad: float = 0.05,
+    ) -> None:
         """Initialize the RelativeBackward task.
 
         Args:
@@ -52,6 +57,8 @@ class RelativeBackward(NavigationTask):
             stabilization_delay=1,  # Delay to stabilize after moving backward
             timeout=20,
             points=0,
+            position_reached_tolerance_cm=position_reached_tolerance_cm,
+            angle_reached_tolerance_rad=angle_reached_tolerance_rad,
         )
         self.estimated_duration = (
             self.speed_profiler.linear_speed_profile.get_total_duration(
@@ -63,7 +70,12 @@ class RelativeBackward(NavigationTask):
 class RelativeForward(NavigationTask):
     """Navigation task to move the robot a specified distance forward."""
 
-    def __init__(self, distance: float) -> None:
+    def __init__(
+        self,
+        distance: float,
+        position_reached_tolerance_cm: float = 1.0,
+        angle_reached_tolerance_rad: float = 0.05,
+    ) -> None:
         """Initialize the RelativeForward task.
 
         Args:
@@ -80,13 +92,20 @@ class RelativeForward(NavigationTask):
                 90,
             ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
+            position_reached_tolerance_cm=position_reached_tolerance_cm,
+            angle_reached_tolerance_rad=angle_reached_tolerance_rad,
         )
 
 
 class RelativeRotation(NavigationTask):
     """Navigation task to rotate the robot by a specified angle."""
 
-    def __init__(self, angle: float) -> None:
+    def __init__(
+        self,
+        angle: float,
+        position_reached_tolerance_cm: float = 1.0,
+        angle_reached_tolerance_rad: float = 0.05,
+    ) -> None:
         """Initialize the RelativeRotation task.
 
         Args:
@@ -104,6 +123,8 @@ class RelativeRotation(NavigationTask):
             ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
             points=0,
+            position_reached_tolerance_cm=position_reached_tolerance_cm,
+            angle_reached_tolerance_rad=angle_reached_tolerance_rad,
         )
         self.estimated_duration = (
             self.speed_profiler.angular_speed_profile.get_total_duration(
@@ -180,6 +201,8 @@ class GoCentroidOfZone(NavigationTask):
             params=NavigatorTaskParams(
                 goal=centroid,
                 timeout=self.timeout,
+                position_reached_tolerance_cm=self.position_reached_tolerance_cm,
+                angle_reached_tolerance_rad=self.angle_reached_tolerance_rad,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,

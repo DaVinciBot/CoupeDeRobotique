@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     )
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
+DEFAULT_ANGLE_REACHED_TOLERANCE_RAD = 0.05
+DEFAULT_POSITION_REACHED_TOLERANCE_CM = 1.0
+
 
 class NavigatorTaskParams:
     """Parameters for a navigation task."""
@@ -28,6 +31,8 @@ class NavigatorTaskParams:
         goal: OrientedPoint | None,
         timeout: float | None,
         stabilization_delay: float,
+        position_reached_tolerance_cm: float,
+        angle_reached_tolerance_rad: float,
         # Parameters
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
@@ -41,6 +46,10 @@ class NavigatorTaskParams:
             goal (OrientedPoint | None): The goal to reach.
             timeout (float | None): The timeout for the task.
             stabilization_delay (float): The stabilization delay.
+            position_reached_tolerance_cm (float):
+                Accepted position error before considering the goal reached.
+            angle_reached_tolerance_rad (float):
+                Accepted orientation error before considering the goal reached.
             path_planner_params (BasePathPlannerParams):
                 The parameters for the path planner.
             trajectory_planner_params (BaseTrajectoryPlannerParams):
@@ -63,3 +72,5 @@ class NavigatorTaskParams:
         self.goal: OrientedPoint | None = goal
         self.timeout: float | None = timeout
         self.stabilization_delay: float = stabilization_delay
+        self.position_reached_tolerance_cm: float = position_reached_tolerance_cm
+        self.angle_reached_tolerance_rad: float = angle_reached_tolerance_rad

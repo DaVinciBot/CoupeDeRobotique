@@ -5,6 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
+from navigation.navigator.task.navigator_task_params import (
+    DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+    DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+)
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
@@ -42,6 +46,8 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         logger: Logger | None = None,
         points: int = 0,
         estimated_duration: float | Callable[[GameContextT], float] = 0.0,
+        position_reached_tolerance_cm: float = DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+        angle_reached_tolerance_rad: float = DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
     ) -> None:
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
@@ -67,6 +73,10 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                 Points awarded for completing this task. Defaults to 0.
             estimated_duration (float, optional):
                 Estimated duration of the task in seconds. Defaults to 0.0.
+            position_reached_tolerance_cm (float, optional):
+                Accepted position error before considering the goal reached.
+            angle_reached_tolerance_rad (float, optional):
+                Accepted orientation error before considering the goal reached.
         """
         super().__init__(
             logger=logger,
@@ -82,6 +92,8 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         self.speed_profiler = speed_profiler
         self.avoidance_params = avoidance_params
         self.acs_detection_profile_params = acs_detection_profile_params
+        self.position_reached_tolerance_cm = position_reached_tolerance_cm
+        self.angle_reached_tolerance_rad = angle_reached_tolerance_rad
 
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
@@ -100,6 +112,8 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                     ctx.arena.compute_goal_position(self.goal) if self.goal else None
                 ),  # goal can be None when we use DeltaPathPlanner
                 timeout=self.timeout,
+                position_reached_tolerance_cm=self.position_reached_tolerance_cm,
+                angle_reached_tolerance_rad=self.angle_reached_tolerance_rad,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,
