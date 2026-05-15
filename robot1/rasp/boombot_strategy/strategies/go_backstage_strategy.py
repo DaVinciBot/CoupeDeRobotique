@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from boombot_strategy.winter_game_context import WinterGameContext
 
 POSITION_TOLERANCE_CM = 0.9
-ANGLE_TOLERANCE_RAD = 0.15
+ANGLE_TOLERANCE_RAD = 0.05
 FINISH_AFTER_EXPECTED_END_DELAY_S = 15.0
 END_START_DELAY_S = 90.0
 
@@ -104,7 +104,7 @@ class GoBackstageStrategy(BaseStrategy):
         forward2 = BaseTaskNode(
             name="Move Forward",
             tasks=RelativeForward(
-                distance=12.5,
+                distance=14,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
