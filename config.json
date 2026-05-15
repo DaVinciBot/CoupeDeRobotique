@@ -213,6 +213,11 @@
       "frontal_detection_angle": 1.570796,
       "semi_circular_detection_angle": 3.141592
     },
+    "ultrasonic": {
+      "trigger_pin": 18,
+      "echo_pin": 24,
+      "stop_distance": 20.0
+    },
     "movement_manager": {
       "movement_resolution": 1,
       "acs_profiles": {

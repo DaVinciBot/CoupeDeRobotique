@@ -18,7 +18,7 @@ from brains import MainBrain
 from geometry import OrientedPoint
 from log_manager import LogLogger
 from navigation.navigator.task import NavigatorTaskParams
-from sensors import Inputs, Lidar, LidarDummy
+from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
 
 _logger = LogLogger(
     identifier="Main",
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         follow_logger_manager_rules=True,
     )
     logger_lidar = LogLogger(
-        identifier="Lidar",
+        identifier="DistanceSensor",
         follow_logger_manager_rules=True,
     )
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     # Sensors
     # Lidar
     if CONFIG.LIDAR_DUMMY:
-        lidar: Lidar | LidarDummy = LidarDummy(
+        lidar: Lidar | LidarDummy | UltrasonicDistanceSensor = LidarDummy(
             logger=logger_lidar,
             min_angle=CONFIG.LIDAR_MIN_ANGLE,
             max_angle=CONFIG.LIDAR_MAX_ANGLE,
@@ -135,13 +135,11 @@ if __name__ == "__main__":
             min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
         )
     else:
-        lidar = Lidar(
+        lidar = UltrasonicDistanceSensor(
             logger=logger_lidar,
-            min_angle=CONFIG.LIDAR_MIN_ANGLE,
-            max_angle=CONFIG.LIDAR_MAX_ANGLE,
-            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+            trigger_pin=CONFIG.ULTRASONIC_TRIGGER_PIN,
+            echo_pin=CONFIG.ULTRASONIC_ECHO_PIN,
+            stop_distance=CONFIG.ULTRASONIC_STOP_DISTANCE,
         )
 
     # Environment
@@ -157,7 +155,16 @@ if __name__ == "__main__":
 
     # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
-    inputs = Inputs(pin_jack=CONFIG.JACK_PIN, pin_bau=CONFIG.BAU_PIN)
+    full_dummy_mode = (
+        CONFIG.LIDAR_DUMMY
+        and CONFIG.ROLLING_BASIS_DUMMY
+        and CONFIG.ACTUATORS_DUMMY
+    )
+    inputs = Inputs(
+        pin_jack=CONFIG.JACK_PIN,
+        pin_bau=CONFIG.BAU_PIN,
+        use_dummy_gpio=full_dummy_mode,
+    )
 
     # Movement
     # Movement manager

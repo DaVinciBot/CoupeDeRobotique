@@ -45,7 +45,7 @@ NORMAL_MATCH_TIMEOUT_S = 100.0
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
-    from sensors import Inputs, Lidar, LidarDummy
+    from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
     from strategy.core.tasks import BaseTask
 
 
@@ -56,7 +56,7 @@ class MainBrain(Brain):
         self,
         logger: Logger,
         # Sensor
-        lidar: Lidar | LidarDummy,
+        lidar: Lidar | LidarDummy | UltrasonicDistanceSensor,
         # Environment
         arena: WinterArena,
         # WS routes
@@ -69,13 +69,14 @@ class MainBrain(Brain):
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
+            lidar (Lidar | LidarDummy | UltrasonicDistanceSensor):
+                Distance sensor instance for obstacle measurements.
             arena (ShowArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
-        self.lidar: Lidar | LidarDummy = lidar
+        self.lidar: Lidar | LidarDummy | UltrasonicDistanceSensor = lidar
         self.arena: WinterArena = arena
         self.mode: str | None = None
         self.status: str = "launching"
