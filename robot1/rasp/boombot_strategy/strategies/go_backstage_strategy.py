@@ -5,10 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
-    GoToColorReservedZoneToFinishGame,
+from boombot_strategy.tasks.navigation_tasks.maneuver import (
+    RelativeBackward,
+    RelativeForward,
 )
-from boombot_strategy.tasks.navigation_tasks.maneuver import RelativeForward, RelativeRotation, RelativeBackward
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
@@ -33,12 +33,12 @@ class GoBackstageStrategy(BaseStrategy):
 
         forward = BaseTaskNode(
             name="Move Forward",
-            tasks=RelativeForward(distance=40.0),
+            tasks=RelativeForward(distance=80.0),
         )
 
         backward = BaseTaskNode(
             name="Move Backward",
-            tasks=RelativeBackward(distance=40.0),
+            tasks=RelativeBackward(distance=80.0),
         )
 
         # Connect the subgraphs in execution order
