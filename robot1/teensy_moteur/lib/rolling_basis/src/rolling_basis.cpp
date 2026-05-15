@@ -14,7 +14,7 @@
 
 #define POSITION_MAX_LINEAR_STEP_CM 0.8
 #define POSITION_MAX_ANGULAR_STEP_CM 0.8
-#define WHEEL_TARGET_MAX_ERROR_CM 15.0
+#define WHEEL_TARGET_MAX_ERROR_CM 20.0
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
