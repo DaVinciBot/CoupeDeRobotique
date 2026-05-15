@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
+    RelativeBackward,
     RelativeForward,
     RelativeRotation,
 )
@@ -83,7 +84,7 @@ class GoBackstageStrategy(BaseStrategy):
             tasks=[
                 _MarkStrategyStart(strategy_timer),
                 RelativeForward(
-                    distance=105.0,
+                    distance=95.0,
                     position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                     angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                     finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -128,7 +129,7 @@ class GoBackstageStrategy(BaseStrategy):
 
         end = BaseTaskNode(
             name="End",
-            tasks=RelativeForward(
+            tasks=RelativeBackward(
                 distance=95.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
@@ -139,9 +140,9 @@ class GoBackstageStrategy(BaseStrategy):
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
             forward,
-            turn1,
-            forward2,
-            turn2,
+            # turn1,
+            # forward2,
+            # turn2,
             # wait_before_end,
             end,
         )
