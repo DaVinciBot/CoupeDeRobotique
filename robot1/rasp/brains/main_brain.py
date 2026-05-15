@@ -229,32 +229,13 @@ class MainBrain(Brain):
         self.shared_crates = crates_to_dict(sc.crates)
         self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
 
-        # --- 2) Wait for jack plug, then wait for trigger --- #
-        if (
-            self.mode != "iihm"
-            and (
-                not CONFIG.LIDAR_DUMMY
-                or not CONFIG.ROLLING_BASIS_DUMMY
-                or not CONFIG.ACTUATORS_DUMMY
-            )
-        ):
-            while not self.jack_plugged:  # wait until cable is plugged
-                sc.receive_data()
-                time.sleep(0.1)
-        else:
-            time.sleep(2)
-
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
-        # --- Wait for trigger --- #
-        if self.mode != "iihm":
-            while not self.jack_triggered:
-                sc.receive_data()
-                time.sleep(0.1)
+        for _ in range(5000):
+            sc.send_data("4|" + ("Y" if self.arena.team_color == TeamColor.YELLOW else "B"))
 
-        # --- 3) Build the strategy --- #
-        # Choose strategy based on configuration
+
         strategy: SmartZoneStrategy | TestStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
