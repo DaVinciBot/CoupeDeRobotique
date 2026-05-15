@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 POSITION_TOLERANCE_CM = 0.9
 ANGLE_TOLERANCE_RAD = 0.15
-FINISH_AFTER_EXPECTED_END_DELAY_S = 5
+FINISH_AFTER_EXPECTED_END_DELAY_S = 10.0
 
 
 class GoBackstageStrategy(BaseStrategy):
@@ -41,7 +41,7 @@ class GoBackstageStrategy(BaseStrategy):
         forward = BaseTaskNode(
             name="Move Forward",
             tasks=RelativeForward(
-                distance=100.0,
+                distance=105.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -81,7 +81,7 @@ class GoBackstageStrategy(BaseStrategy):
         end = BaseTaskNode(
             name="End",
             tasks=RelativeForward(
-                distance=100.0,
+                distance=105.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=80.0,
