@@ -104,7 +104,7 @@ class GoBackstageStrategy(BaseStrategy):
         forward2 = BaseTaskNode(
             name="Move Forward",
             tasks=RelativeForward(
-                distance=12,
+                distance=12.5,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
