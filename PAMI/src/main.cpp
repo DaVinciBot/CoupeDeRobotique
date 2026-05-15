@@ -265,11 +265,11 @@ void setup() {
         strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         strategy->start();
     }else{
-        int16_t colorinversion = 1; // 1 ou -1 pour inverser les couleurs si besoin
+        int16_t colorinversion = -1; // 1 ou -1 pour inverser les couleurs si besoin
         strategy->addAction(new Wait(1000));
-        strategy->addAction(new BlockingForward(rollingBasis, 155.0f));
-        strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.5f));
-        strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
+        strategy->addAction(new BlockingForward(rollingBasis, 160.0f));
+        strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.45f));
+        strategy->addAction(new BlockingForward(rollingBasis, 105.0f));
         strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         strategy->start();
     }
