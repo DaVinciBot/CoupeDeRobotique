@@ -54,10 +54,12 @@
 #define LIDAR_TX_PIN 43
 
 // Development toggles
-#define ENABLE_DEBUG true
+#define ENABLE_DEBUG false
+#define ENABLE_LIDAR true
 #define ENABLE_OTA false
 #define ENABLE_LORA false
-#define ENABLE_HOMOLOGATION false
+#define ENABLE_HOMOLOGATION true
+#define ENABLE_NINJA false
 
 #if ENABLE_DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
