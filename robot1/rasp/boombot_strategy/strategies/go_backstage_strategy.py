@@ -83,7 +83,7 @@ class GoBackstageStrategy(BaseStrategy):
             tasks=[
                 _MarkStrategyStart(strategy_timer),
                 RelativeForward(
-                    distance=85.0,
+                    distance=105.0,
                     position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                     angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                     finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -132,7 +132,7 @@ class GoBackstageStrategy(BaseStrategy):
                 distance=95.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
-                finish_after_expected_end_delay_s=80.0,
+                finish_after_expected_end_delay_s=105.0,
             ),
         )
 
@@ -142,7 +142,7 @@ class GoBackstageStrategy(BaseStrategy):
             turn1,
             forward2,
             turn2,
-            wait_before_end,
+            # wait_before_end,
             end,
         )
 
