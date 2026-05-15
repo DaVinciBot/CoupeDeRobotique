@@ -299,13 +299,14 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
-    def send_data(self) -> None:
+    def send_data(self, data: str | None = None) -> None:
         """Dummy method to send data. Logs the action without transmitting anything."""
         if self.lora is not None:
-            self.lora.send("Hello from WinterSpatialComputationDummy!")
+            self.lora.send(data or "Hello from WinterSpatialComputationDummy!")
         else:
             self.logger.info(
-                "WinterSpatialComputationDummy: Simulating sending data to LoRa module.",
+                "WinterSpatialComputationDummy: Simulating sending data "
+                f"to LoRa module: {data}",
             )
 
     @override
