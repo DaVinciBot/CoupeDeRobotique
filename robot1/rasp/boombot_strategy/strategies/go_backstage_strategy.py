@@ -135,7 +135,7 @@ class GoBackstageStrategy(BaseStrategy):
         turn_90_1 = make_turn("Turn 90 deg 1", math.pi / 2)
         forward_52 = make_forward("Forward 52 cm", 52.0)
         turn_minus_90_1 = make_turn("Turn -90 deg 1", -math.pi / 2)
-        forward_90 = make_forward("Forward 96 cm", 98.0)
+        forward_90 = make_forward("Forward 96 cm", 97.0)
         turn_90_2 = make_turn("Turn 90 deg 2", math.pi / 2)
         forward_58_3 = make_forward("Forward 58.3 cm", 58.3)
         backward_22 = make_backward("Backward 22 cm", 20.0)
