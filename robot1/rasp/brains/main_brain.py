@@ -55,6 +55,16 @@ def set_zero_pids(rolling_basis: RollingBasis | RollingBasisDummy) -> None:
     )
 
 
+def get_relative_rotation_sign(team_color: TeamColor) -> float:
+    """Return the team-dependent sign for relative rotations.
+
+    Positive relative rotations are calibrated for the blue team.
+    """
+    if team_color == TeamColor.YELLOW:
+        return -1.0
+    return 1.0
+
+
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
@@ -240,6 +250,7 @@ class MainBrain(Brain):
                         actuators=actuators,
                         point=self.score,
                     ),
+                    rotation_sign=get_relative_rotation_sign(self.arena.team_color),
                 )
 
             self.should_send_start = True

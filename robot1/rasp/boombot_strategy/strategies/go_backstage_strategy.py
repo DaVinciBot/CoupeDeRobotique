@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import math
+from typing import TYPE_CHECKING
+
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
-    RelativeBackward,
     RelativeForward,
     RelativeRotation,
 )
@@ -25,7 +25,7 @@ FINISH_AFTER_EXPECTED_END_DELAY_S = 5
 class GoBackstageStrategy(BaseStrategy):
     """Deploy the banner then move directly to the backstage zone."""
 
-    def __init__(self, ctx: WinterGameContext) -> None:
+    def __init__(self, ctx: WinterGameContext, rotation_sign: float = 1.0) -> None:
         """Initialize the strategy.
 
         Build the task flow using subgraphs and direct transitions.
@@ -33,6 +33,8 @@ class GoBackstageStrategy(BaseStrategy):
         Args:
             ctx (WinterGameContext):
                 Game context containing game-specific configurations and zones.
+            rotation_sign (float):
+                Direction multiplier for relative rotations.
         """
         super().__init__(ctx)
 
@@ -49,7 +51,7 @@ class GoBackstageStrategy(BaseStrategy):
         turn1 = BaseTaskNode(
             name="Turn 1",
             tasks=RelativeRotation(
-                angle=math.pi / 2,
+                angle=rotation_sign * math.pi / 2,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -59,7 +61,7 @@ class GoBackstageStrategy(BaseStrategy):
         forward2 = BaseTaskNode(
             name="Move Forward",
             tasks=RelativeForward(
-                distance=10.0,
+                distance=9.5,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
                 finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
@@ -69,7 +71,7 @@ class GoBackstageStrategy(BaseStrategy):
         turn2 = BaseTaskNode(
             name="Turn 2",
             tasks=RelativeRotation(
-                angle=8*math.pi / 18,
+                angle=rotation_sign * 8 * math.pi / 18,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=0.05,
                 finish_after_expected_end_delay_s=20.0,
