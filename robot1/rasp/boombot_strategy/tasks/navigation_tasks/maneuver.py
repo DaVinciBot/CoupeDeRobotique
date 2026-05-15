@@ -52,7 +52,7 @@ class RelativeBackward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                1,
+                20,
                 35,
             ),
             stabilization_delay=1,  # Delay to stabilize after moving backward
@@ -91,7 +91,7 @@ class RelativeForward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                1,
+                20,
                 90,
             ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
@@ -123,7 +123,7 @@ class RelativeRotation(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                1,
+                20,
                 35,
             ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
@@ -157,7 +157,7 @@ class GoCentroidOfZone(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=1,
+                acs_distance=20,
                 width_view=40,
             ),
             stabilization_delay=0.5,

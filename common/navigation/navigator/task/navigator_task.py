@@ -7,7 +7,11 @@ import time
 from typing import TYPE_CHECKING, cast
 
 from navigation.navigator.task.states import NavigatorTaskState
-from navigation.path_planner import PathPlannerFactory, PathPlannerPathPlanParamsFactory
+from navigation.path_planner import (
+    PathPlannerFactory,
+    PathPlannerPathPlanParamsFactory,
+    PathPlanningStrategy,
+)
 from navigation.trajectory_planner import (
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
@@ -134,6 +138,36 @@ class NavigatorTask:
             current_position,
         )
         return self.current_trajectory_command
+
+    def start_replanned_trajectory_from_current_position(
+        self,
+        current_position: OrientedPoint,
+    ) -> TrajectoryPlanCommand:
+        """Replan after avoidance without restarting relative delta tasks.
+
+        Delta tasks already computed an absolute ``_planned_goal`` during the
+        initial plan. Reusing their original delta from the current position would
+        repeat the full relative move after every avoidance interruption.
+        """
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.DELTA
+            and self._planned_goal is not None
+        ):
+            return self.start_replanned_trajectory(
+                [current_position, self._planned_goal],
+                current_position,
+            )
+
+        last_params = cast(
+            "BasePathPlannerPlanPathParams",
+            self.path_planner.last_plan_path_params,
+        )
+        last_params.start = current_position
+        return self.start_replanned_trajectory(
+            self.path_planner.plan_path(last_params),
+            current_position,
+        )
 
     def _is_goal_reached(self, current_position: OrientedPoint) -> bool:
         goal = self._planned_goal or self.params.goal

@@ -20,7 +20,6 @@ if TYPE_CHECKING:
         BaseAcsDetectionProfileParams,
     )
     from navigation.navigator.task import NavigatorTask
-    from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
 
 
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
@@ -108,19 +107,12 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         if self.state == AvoidanceState.AVOIDING:
             self._logger.info("[NAV:Avoid] Obstacle cleared - replanning trajectory")
 
-            # Obstacle is no longer detected, replan from current position
-            last_params = cast(
-                "BasePathPlannerPlanPathParams",
-                current_navigator_task.path_planner.last_plan_path_params,
-            )
-            last_params.start = position
-
             self._logger.debug(f"[NAV:Avoid] Replanning from updated start: {position}")
 
-            new_path = current_navigator_task.path_planner.plan_path(last_params)
-            cmd = current_navigator_task.start_replanned_trajectory(
-                new_path,
-                position,
+            cmd = (
+                current_navigator_task.start_replanned_trajectory_from_current_position(
+                    position,
+                )
             )
 
             self._reset_timer()

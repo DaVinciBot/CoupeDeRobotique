@@ -35,7 +35,6 @@ if TYPE_CHECKING:
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,
     )
-    from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
     from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
@@ -166,19 +165,12 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ):
             self._logger.info("[NAV:Avoid] Obstacle cleared - replanning trajectory")
 
-            # Obstacle is no longer detected, replan from current position
-            last_params = cast(
-                "BasePathPlannerPlanPathParams",
-                current_navigator_task.path_planner.last_plan_path_params,
-            )
-            last_params.start = position  # Update start position to current location
-
             self._logger.debug(f"[NAV:Avoid] Replanning from: {position}")
 
-            new_path = current_navigator_task.path_planner.plan_path(last_params)
-            cmd = current_navigator_task.start_replanned_trajectory(
-                new_path,
-                position,
+            cmd = (
+                current_navigator_task.start_replanned_trajectory_from_current_position(
+                    position,
+                )
             )
 
             self._logger.debug("[NAV:Avoid] Trajectory planner clock reset")
