@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 POSITION_TOLERANCE_CM = 0.9
 ANGLE_TOLERANCE_RAD = 0.05
-FINISH_AFTER_EXPECTED_END_DELAY_S = 15.0
+FINISH_AFTER_EXPECTED_END_DELAY_S = 5.0
 END_START_DELAY_S = 90.0
 
 
@@ -135,7 +135,7 @@ class GoBackstageStrategy(BaseStrategy):
         turn_90_1 = make_turn("Turn 90 deg 1", math.pi / 2)
         forward_52 = make_forward("Forward 52 cm", 52.0)
         turn_minus_90_1 = make_turn("Turn -90 deg 1", -math.pi / 2)
-        forward_90 = make_forward("Forward 90 cm", 90.0)
+        forward_90 = make_forward("Forward 93 cm", 93.0)
         turn_90_2 = make_turn("Turn 90 deg 2", math.pi / 2)
         forward_58_3 = make_forward("Forward 58.3 cm", 58.3)
         backward_22 = make_backward("Backward 22 cm", 22.0)

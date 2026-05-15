@@ -114,7 +114,7 @@
           "default": {
             "acceleration": 10,
             "deceleration": 10,
-            "max_speed": 10
+            "max_speed": 20
           },
           "slow": {
             "acceleration": 5,
