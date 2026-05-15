@@ -30,9 +30,14 @@
  */
 class RollingBasis {
    public:
-    void moveForwardBlocking(float distanceMm);
-    void moveForwardStepsBlocking(long steps);
-    void turnBlocking(float angleRad);
+    typedef bool (*PauseCheckFn)();
+
+    void moveForwardBlocking(float distanceMm,
+                             PauseCheckFn shouldPause = nullptr);
+    void moveForwardStepsBlocking(long steps,
+                                  PauseCheckFn shouldPause = nullptr);
+    void turnBlocking(float angleRad,
+                      PauseCheckFn shouldPause = nullptr);
     /**
      * @brief Enumeration representing the different phases of motion.
      *

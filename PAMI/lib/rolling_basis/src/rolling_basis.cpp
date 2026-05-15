@@ -196,20 +196,22 @@ float RollingBasis::getAngularSpeedRadPerS() const {
     return _angularSpeed;
 }
 
-void RollingBasis::moveForwardBlocking(float distanceMm) {
+void RollingBasis::moveForwardBlocking(float distanceMm,
+                                       PauseCheckFn shouldPause) {
     Serial.printf("[Test] Blocking forward %.1f mm\n", distanceMm);
 
     float stepsFloat =
         distanceMm * _leftMotor->getStepsPerRev() / _wheelCircumferenceMm;
     long steps = static_cast<long>(roundf(stepsFloat));
 
-    moveForwardStepsBlocking(steps);
+    moveForwardStepsBlocking(steps, shouldPause);
     _currentPose.x += distanceMm * cosf(_currentPose.theta);
     _currentPose.y += distanceMm * sinf(_currentPose.theta);
     Serial.println("[Test] Blocking forward done");
 }
 
-void RollingBasis::moveForwardStepsBlocking(long steps) {
+void RollingBasis::moveForwardStepsBlocking(long steps,
+                                            PauseCheckFn shouldPause) {
     Serial.printf("[Test] Blocking forward %ld steps\n", steps);
 
     long targetSteps = labs(steps);
@@ -224,6 +226,13 @@ void RollingBasis::moveForwardStepsBlocking(long steps) {
         static_cast<unsigned long>(1000000.0f / max(1.0f, stepsPerSec));
 
     for (long i = 0; i < targetSteps; ++i) {
+        // ACS pause: wait while obstacle detected
+        if (shouldPause != nullptr) {
+            while (shouldPause()) {
+                delay(10);
+            }
+        }
+
         unsigned long startUs = micros();
 
         _leftMotor->stepOnceAtSignedSpeed(-dir);
@@ -242,7 +251,8 @@ void RollingBasis::moveForwardStepsBlocking(long steps) {
                   _leftMotor->getStepCount(), _rightMotor->getStepCount());
 }
 
-void RollingBasis::turnBlocking(float angleRad) {
+void RollingBasis::turnBlocking(float angleRad,
+                                PauseCheckFn shouldPause) {
     Serial.printf("[Test] Blocking turn %.3f rad\n", angleRad);
 
     _leftMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
@@ -253,10 +263,26 @@ void RollingBasis::turnBlocking(float angleRad) {
     float duration = fabsf(targetDTheta) / _angularSpeed;
     float dir = (targetDTheta >= 0.0f) ? 1.0f : -1.0f;
     unsigned long start = micros();
+    unsigned long pausedUs = 0;
 
     _sendWheelSpeeds(0.0f, _angularSpeed * dir);
 
-    while ((micros() - start) * 1e-6f < duration) {
+    while ((micros() - start - pausedUs) * 1e-6f < duration) {
+        // ACS pause: stop motors and wait
+        if (shouldPause != nullptr && shouldPause()) {
+            _leftMotor->setTargetSpeed(0.0f);
+            _rightMotor->setTargetSpeed(0.0f);
+            unsigned long pauseStart = micros();
+            while (shouldPause()) {
+                _leftMotor->update();
+                _rightMotor->update();
+                delay(10);
+            }
+            pausedUs += micros() - pauseStart;
+            // Resume rotation
+            _sendWheelSpeeds(0.0f, _angularSpeed * dir);
+        }
+
         _leftMotor->update();
         _rightMotor->update();
     }

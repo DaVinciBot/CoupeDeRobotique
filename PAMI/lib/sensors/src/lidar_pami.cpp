@@ -134,20 +134,6 @@ bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
     return minDistance < distanceMin;
 }
 
-bool lidar_pami::isTiretteOn(uint16_t threshold) {
-    float mean = 0.0f;
-    for (uint16_t i = 0; i < POINT_COUNT; ++i) {
-        uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
-        uint16_t distance = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
-        distance &= 0x01FF;                     // keep 9 LSBs
-        mean += distance > 300 ? 0 : distance;  // ignore points > 300mm
-    }
-    mean /= POINT_COUNT;
-
-    //Serial.printf("Mean distance: %f\n", mean);
-
-    return mean < threshold;
-}
 
 bool lidar_pami::isTiretteOn(uint16_t threshold) {
     float mean = 0.0f;

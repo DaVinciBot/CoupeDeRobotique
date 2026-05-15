@@ -10,14 +10,32 @@ float wrapToPi(float angle) {
 }
 }  // namespace
 
-GoTo::GoTo(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
+lidar_pami* GoTo::_sLidar = nullptr;
+uint16_t GoTo::_sAcsDistance = 75;
+
+GoTo::GoTo(RollingBasis* rb, const Point& target,
+           lidar_pami* lidar, uint16_t acsDistanceMm)
+    : _rb(rb), _target(target) {
+    _sLidar = lidar;
+    _sAcsDistance = acsDistanceMm;
     Serial.printf("[GoTo] Target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
                   _target.y, _target.theta);
+}
+
+bool GoTo::shouldPause() {
+    if (_sLidar == nullptr) return false;
+    _sLidar->update();
+    bool paused = _sLidar->obstacleAhead(_sAcsDistance);
+    if (paused) {
+        Serial.println("[ACS] Obstacle - pause GoTo");
+    }
+    return paused;
 }
 
 void GoTo::start() {
     _started = true;
     _finished = false;
+    RollingBasis::PauseCheckFn pause = _sLidar ? shouldPause : nullptr;
 
     Point cur = _rb->getPose();
     Serial.printf(
@@ -27,12 +45,12 @@ void GoTo::start() {
     float distance = Point::distance(cur, _target);
     if (distance > 0.0f) {
         float targetHeading = static_cast<float>(Point::angle(cur, _target));
-        _rb->turnBlocking(wrapToPi(targetHeading - cur.theta));
-        _rb->moveForwardBlocking(distance);
+        _rb->turnBlocking(wrapToPi(targetHeading - cur.theta), pause);
+        _rb->moveForwardBlocking(distance, pause);
     }
 
     cur = _rb->getPose();
-    _rb->turnBlocking(wrapToPi(_target.theta - cur.theta));
+    _rb->turnBlocking(wrapToPi(_target.theta - cur.theta), pause);
     _rb->stop();
     _finished = true;
     Serial.println("[GoTo] Finished");

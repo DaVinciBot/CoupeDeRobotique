@@ -62,8 +62,15 @@ class lidar_pami {
      * @return true if the tirette is on
      * @return false otherwise
      */
+    bool obstacleDirectlyAhead(uint16_t distanceMin = 75);
+    /**
+     * @brief Check if the tirette is on by looking at the mean distance of the central points.
+     * 
+     * @param threshold Threshold to consider the tirette engaged
+     * @return true if the tirette is on
+     * @return false otherwise
+     */
     bool isTiretteOn(uint16_t threshold = 25);
-
     /**
      * @brief Main processing loop: call regularly to process incoming bytes
      * and detect complete frames.

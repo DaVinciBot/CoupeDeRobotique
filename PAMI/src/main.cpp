@@ -41,8 +41,8 @@ Motor* rightMotor = new Motor(RIGHT_STEP_PIN,
                               PULSE_US,
                               true);
 
-RollingBasis* rollingBasis = new RollingBasis(leftMotor,
-                                              rightMotor,
+RollingBasis* rollingBasis = new RollingBasis(rightMotor,
+                                              leftMotor,
                                               WHEEL_DIAMETER_MM,
                                               WHEEL_BASE_MM,
                                               Point{0.0f, 0.0f, 0.0f});
@@ -105,7 +105,6 @@ bool strategyRunning = false;
 bool strategyDoneLogged = false;
 unsigned long lastStrategyUpdateMs = 0;
 bool canStart = false;
-bool obstacleDetected = false;
 
 #if ENABLE_LORA
 void purgeLoRa() {
@@ -231,9 +230,9 @@ void setup() {
 #endif
 
     // rollingBasis->moveForwardBlocking(100.0f);
-    strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
-    strategy->addAction(new GoTo(rollingBasis, Point{100.0f, 0.0f, 1.5708f}));
-    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f));
+    strategy->addAction(new BlockingForward(rollingBasis, 100.0f, lidar));
+    strategy->addAction(new GoTo(rollingBasis, Point{100.0f, 0.0f, 1.5708f}, lidar));
+    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f, lidar));
     strategy->start();
 
     strategyRunning = true;
@@ -257,21 +256,6 @@ void loop() {
     //               rollingBasis->getPose().theta);
 
     if (!strategyRunning) {
-        return;
-    }
-
-    // Obstacle avoidance: stop motors if object < 75mm
-    bool obstacle = lidar->obstacleAhead(75);
-    if (obstacle && !obstacleDetected) {
-        obstacleDetected = true;
-        rollingBasis->stop();
-        Serial.println("[ACS] Obstacle detecte < 75mm - ARRET");
-    } else if (!obstacle && obstacleDetected) {
-        obstacleDetected = false;
-        Serial.println("[ACS] Obstacle parti - REPRISE");
-    }
-
-    if (obstacleDetected) {
         return;
     }
 
