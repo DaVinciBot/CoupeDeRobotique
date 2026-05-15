@@ -68,6 +68,86 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
 
     return mean < distanceMin;
 }
+bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
+    // On initialise le minimum à une valeur très haute (plus grande que la portée max de 300)
+    uint16_t minDistance = 1000; 
+    bool validPointFound = false;
+    
+    // On regarde le CENTRE (Index ~70 à ~90 sur les 160 points)
+    // Cela correspond au "nez" du robot
+    int startIdx = (POINT_COUNT / 2) - 10; 
+    int endIdx   = (POINT_COUNT / 2) + 10; 
+
+    for (int i = 0; i <= 20; ++i) {
+        
+        uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
+        
+        // Reconstruction de la valeur sur 16 bits
+        uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+        uint16_t distance = raw & 0x01FF; // Masque 9 bits
+        
+        // --- LOGIQUE DE FILTRAGE ---
+        
+        // On ignore :
+        // 1. Les 0 (erreurs ou trop près)
+        // 2. Les valeurs > 300 (l'infini pour le GS2)
+        // 3. Les valeurs < 25 (zone aveugle du capteur)
+        if (distance > 25 && distance < 300) {
+            
+            // C'EST ICI QUE TOUT CHANGE :
+            // On cherche la distance la plus PETITE (l'objet le plus proche)
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            validPointFound = true;
+        }
+    }
+    for (int i = 140; i <= 159; ++i) {
+        
+        uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
+        
+        // Reconstruction de la valeur sur 16 bits
+        uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+        uint16_t distance = raw & 0x01FF; // Masque 9 bits
+        
+        // --- LOGIQUE DE FILTRAGE ---
+        
+        // On ignore :
+        // 1. Les 0 (erreurs ou trop près)
+        // 2. Les valeurs > 300 (l'infini pour le GS2)
+        // 3. Les valeurs < 25 (zone aveugle du capteur)
+        if (distance > 25 && distance < 300) {
+            
+            // C'EST ICI QUE TOUT CHANGE :
+            // On cherche la distance la plus PETITE (l'objet le plus proche)
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            validPointFound = true;
+        }
+    }
+    
+    // Si le capteur n'a rien vu de valide dans cette zone (que du noir ou du vide total)
+    if (!validPointFound) return false; 
+    
+    // Si l'objet le plus proche est inférieur au seuil -> OBSTACLE !
+    return minDistance < distanceMin;
+}
+
+bool lidar_pami::isTiretteOn(uint16_t threshold) {
+    float mean = 0.0f;
+    for (uint16_t i = 0; i < POINT_COUNT; ++i) {
+        uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
+        uint16_t distance = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
+        distance &= 0x01FF;                     // keep 9 LSBs
+        mean += distance > 300 ? 0 : distance;  // ignore points > 300mm
+    }
+    mean /= POINT_COUNT;
+
+    //Serial.printf("Mean distance: %f\n", mean);
+
+    return mean < threshold;
+}
 
 bool lidar_pami::isTiretteOn(uint16_t threshold) {
     float mean = 0.0f;
