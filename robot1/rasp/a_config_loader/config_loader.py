@@ -170,6 +170,10 @@ class CONFIG:
         LIDAR_FRONTAL_DETECTION_ANGLE (float): Frontal detection angle for lidar
         LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE (float):
             Semi-circular detection angle for lidar.
+        ULTRASONIC_CONFIG (dict[str, Any]): Ultrasonic sensor configuration.
+        ULTRASONIC_TRIGGER_PIN (int): BCM GPIO pin for HC-SR04 Trigger.
+        ULTRASONIC_ECHO_PIN (int): BCM GPIO pin for HC-SR04 Echo.
+        ULTRASONIC_STOP_DISTANCE (float): Stop distance in centimeters.
 
         ARENA_CONFIG (dict[str, Any]): Arena configuration settings.
         ARENA_BORDER_BUFFER (float): Buffer size for arena borders.
@@ -399,6 +403,12 @@ class CONFIG:
     LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE: float = LIDAR_CONFIG[
         "semi_circular_detection_angle"
     ]
+
+    # Ultrasonic front distance sensor
+    ULTRASONIC_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["ultrasonic"]
+    ULTRASONIC_TRIGGER_PIN: int = int(ULTRASONIC_CONFIG["trigger_pin"])
+    ULTRASONIC_ECHO_PIN: int = int(ULTRASONIC_CONFIG["echo_pin"])
+    ULTRASONIC_STOP_DISTANCE: float = float(ULTRASONIC_CONFIG["stop_distance"])
 
     # Arena
     ARENA_CONFIG: dict[str, Any] = CONFIG_STORE[ARENA_CONFIG_KEY]

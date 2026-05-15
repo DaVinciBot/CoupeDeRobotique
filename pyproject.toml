@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools"]
 
 [project]
 dependencies = [
@@ -17,7 +17,7 @@ dependencies = [
   "graphviz==0.20.3",
   # "idna==3.10",
   "iso8601==2.1.0",
-  "lgpio>=0.2.2.0",
+  "lgpio>=0.2.2.0; sys_platform == 'linux'",
   "loggerplusplus==0.1.5",
   # "multidict==6.1.0",
   "networkx==3.4.2",

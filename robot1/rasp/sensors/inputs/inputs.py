@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
-from gpio import PIN
 from log_manager import LogLogger
 
 if TYPE_CHECKING:
@@ -24,6 +23,8 @@ class Inputs:
         pin_jack: int,
         pin_bau: int,
         logger: Logger | None = None,
+        *,
+        use_dummy_gpio: bool = False,
     ) -> None:
         """Initialize the Inputs class.
 
@@ -32,11 +33,20 @@ class Inputs:
             pin_bau (int): GPIO pin number for the BAU input.
             logger (Logger | None, optional):
                 Logger instance for logging. Defaults to None.
+            use_dummy_gpio (bool, optional):
+                Use simulated pins instead of Raspberry Pi GPIO. Defaults to False.
         """
         self._logger = logger or LogLogger(
             identifier="Inputs",
             follow_logger_manager_rules=True,
         )
+
+        if use_dummy_gpio:
+            from gpio.dummy_gpio import PIN  # noqa: PLC0415
+
+            self._logger.info("[SENSOR:Inputs] Dummy GPIO mode initialized")
+        else:
+            from gpio import PIN  # noqa: PLC0415
 
         self.jack: PIN = PIN(pin_jack)
         self.jack.setup("input_pullup", reverse_state=True)
