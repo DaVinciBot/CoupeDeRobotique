@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 // General configuration
-#define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
+#define ACS_TRESHOLD 75  // Threshold for ACS activation in mm
 #define MICROSTEPPING_FACTOR 4
 
 // Motor configuration
@@ -57,7 +57,7 @@
 #define ENABLE_DEBUG true
 #define ENABLE_OTA false
 #define ENABLE_LORA false
-#define ENABLE_HOMOLOGATION true
+#define ENABLE_HOMOLOGATION false
 
 #if ENABLE_DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)

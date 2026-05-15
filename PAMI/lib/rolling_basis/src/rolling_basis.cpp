@@ -227,14 +227,33 @@ void RollingBasis::moveForwardStepsBlocking(long steps,
 
     for (long i = 0; i < targetSteps; ++i) {
         // ACS pause: check every 10 steps
-        if (shouldPause != nullptr && i % 10 == 0 && shouldPause()) {
-            _leftMotor->stopManualStepping();
-            _rightMotor->stopManualStepping();
-            DEBUG_PRINTLN("[ACS] Pause");
-            while (shouldPause()) {
-                vTaskDelay(1);
+        if (shouldPause != nullptr && i % 10 == 0) {
+            bool paused = shouldPause();
+            if (i % 1000 == 0) {
+                DEBUG_PRINTF("[ACS] step %ld, blocked=%d\n", i, paused);
             }
-            DEBUG_PRINTLN("[ACS] Resume");
+            if (paused) {
+                _leftMotor->stopManualStepping();
+                _rightMotor->stopManualStepping();
+                DEBUG_PRINTLN("[ACS] Pause");
+                int clearCount = 0;
+                int loops = 0;
+                while (clearCount < 10) {
+                    vTaskDelay(pdMS_TO_TICKS(100));
+                    bool blocked = shouldPause();
+                    loops++;
+                    if (loops % 5 == 0) {
+                        DEBUG_PRINTF("[ACS] waiting: blocked=%d clear=%d\n",
+                                     blocked, clearCount);
+                    }
+                    if (blocked) {
+                        clearCount = 0;
+                    } else {
+                        clearCount++;
+                    }
+                }
+                DEBUG_PRINTLN("[ACS] Resume");
+            }
         }
 
         unsigned long startUs = micros();

@@ -1,6 +1,7 @@
 #include "blocking_forward.h"
 #include "blocking_turn.h"
 #include "actionneur_sweep.h"
+#include "wait.h"
 #include "config.h"
 #include "go_to.h"
 #include "lidar_pami.h"
@@ -259,11 +260,18 @@ void setup() {
 
     // rollingBasis->moveForwardBlocking(100.0f);
     if(ENABLE_HOMOLOGATION){
+        strategy->addAction(new Wait(5000));
         strategy->addAction(new BlockingForward(rollingBasis, 1400.0f));
         strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         strategy->start();
     }else{
-        
+        int16_t colorinversion = 1; // 1 ou -1 pour inverser les couleurs si besoin
+        strategy->addAction(new Wait(1000));
+        strategy->addAction(new BlockingForward(rollingBasis, 155.0f));
+        strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.5f));
+        strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
+        strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
+        strategy->start();
     }
 
     strategyRunning = true;
