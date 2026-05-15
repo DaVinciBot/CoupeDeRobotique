@@ -105,6 +105,7 @@ bool strategyRunning = false;
 bool strategyDoneLogged = false;
 unsigned long lastStrategyUpdateMs = 0;
 bool canStart = false;
+bool obstacleDetected = false;
 
 #if ENABLE_LORA
 void purgeLoRa() {
@@ -256,6 +257,21 @@ void loop() {
     //               rollingBasis->getPose().theta);
 
     if (!strategyRunning) {
+        return;
+    }
+
+    // Obstacle avoidance: stop motors if object < 75mm
+    bool obstacle = lidar->obstacleAhead(75);
+    if (obstacle && !obstacleDetected) {
+        obstacleDetected = true;
+        rollingBasis->stop();
+        Serial.println("[ACS] Obstacle detecte < 75mm - ARRET");
+    } else if (!obstacle && obstacleDetected) {
+        obstacleDetected = false;
+        Serial.println("[ACS] Obstacle parti - REPRISE");
+    }
+
+    if (obstacleDetected) {
         return;
     }
 
