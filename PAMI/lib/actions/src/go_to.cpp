@@ -25,7 +25,7 @@ GoTo::GoTo(RollingBasis* rb, const Point& target,
 bool GoTo::shouldPause() {
     if (_sLidar == nullptr) return false;
     _sLidar->update();
-    bool paused = _sLidar->obstacleAhead(_sAcsDistance);
+    bool paused = _sLidar->obstacleDirectlyAhead(_sAcsDistance);
     if (paused) {
         Serial.println("[ACS] Obstacle - pause GoTo");
     }

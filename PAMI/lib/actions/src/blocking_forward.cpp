@@ -13,7 +13,7 @@ BlockingForward::BlockingForward(RollingBasis* rb, float distanceMm,
 bool BlockingForward::shouldPause() {
     if (_sLidar == nullptr) return false;
     _sLidar->update();
-    bool paused = _sLidar->obstacleAhead(_sAcsDistance);
+    bool paused = _sLidar->obstacleDirectlyAhead(_sAcsDistance);
     if (paused) {
         Serial.println("[ACS] Obstacle - pause");
     }
