@@ -60,7 +60,7 @@ def get_relative_rotation_sign(team_color: TeamColor) -> float:
 
     Positive relative rotations are calibrated for the blue team.
     """
-    if team_color == TeamColor.YELLOW:
+    if team_color == TeamColor.BLUE:
         return -1.0
     return 1.0
 
