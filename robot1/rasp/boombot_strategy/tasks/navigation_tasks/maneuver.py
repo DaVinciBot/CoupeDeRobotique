@@ -35,6 +35,7 @@ class RelativeBackward(NavigationTask):
         distance: float,
         position_reached_tolerance_cm: float = 1.0,
         angle_reached_tolerance_rad: float = 0.05,
+        finish_after_expected_end_delay_s: float | None = None,
     ) -> None:
         """Initialize the RelativeBackward task.
 
@@ -59,6 +60,7 @@ class RelativeBackward(NavigationTask):
             points=0,
             position_reached_tolerance_cm=position_reached_tolerance_cm,
             angle_reached_tolerance_rad=angle_reached_tolerance_rad,
+            finish_after_expected_end_delay_s=finish_after_expected_end_delay_s,
         )
         self.estimated_duration = (
             self.speed_profiler.linear_speed_profile.get_total_duration(
@@ -75,6 +77,7 @@ class RelativeForward(NavigationTask):
         distance: float,
         position_reached_tolerance_cm: float = 1.0,
         angle_reached_tolerance_rad: float = 0.05,
+        finish_after_expected_end_delay_s: float | None = None,
     ) -> None:
         """Initialize the RelativeForward task.
 
@@ -94,6 +97,7 @@ class RelativeForward(NavigationTask):
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
             position_reached_tolerance_cm=position_reached_tolerance_cm,
             angle_reached_tolerance_rad=angle_reached_tolerance_rad,
+            finish_after_expected_end_delay_s=finish_after_expected_end_delay_s,
         )
 
 
@@ -105,6 +109,7 @@ class RelativeRotation(NavigationTask):
         angle: float,
         position_reached_tolerance_cm: float = 1.0,
         angle_reached_tolerance_rad: float = 0.05,
+        finish_after_expected_end_delay_s: float | None = None,
     ) -> None:
         """Initialize the RelativeRotation task.
 
@@ -125,6 +130,7 @@ class RelativeRotation(NavigationTask):
             points=0,
             position_reached_tolerance_cm=position_reached_tolerance_cm,
             angle_reached_tolerance_rad=angle_reached_tolerance_rad,
+            finish_after_expected_end_delay_s=finish_after_expected_end_delay_s,
         )
         self.estimated_duration = (
             self.speed_profiler.angular_speed_profile.get_total_duration(
@@ -203,6 +209,9 @@ class GoCentroidOfZone(NavigationTask):
                 timeout=self.timeout,
                 position_reached_tolerance_cm=self.position_reached_tolerance_cm,
                 angle_reached_tolerance_rad=self.angle_reached_tolerance_rad,
+                finish_after_expected_end_delay_s=(
+                    self.finish_after_expected_end_delay_s
+                ),
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,

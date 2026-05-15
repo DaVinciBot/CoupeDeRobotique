@@ -116,6 +116,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                     stabilization_delay=0.0,
                     position_reached_tolerance_cm=DEFAULT_POSITION_REACHED_TOLERANCE_CM,
                     angle_reached_tolerance_rad=DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+                    finish_after_expected_end_delay_s=None,
                     path_planner_params=DeltaPathPlannerParams(
                         distance=self.params.backward_distance,
                     ),

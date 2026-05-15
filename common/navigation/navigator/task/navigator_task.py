@@ -154,9 +154,16 @@ class NavigatorTask:
     def _is_finished(self, current_position: OrientedPoint) -> bool:
         if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
             return False
+        total_duration = self.trajectory_planner.get_total_duration()
+        elapsed_time = self._get_elapsed_time()
+        if elapsed_time <= total_duration:
+            return False
+        if self._is_goal_reached(current_position):
+            return True
+        finish_delay = self.params.finish_after_expected_end_delay_s
         return (
-            self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
-            and self._is_goal_reached(current_position)
+            finish_delay is not None
+            and elapsed_time > total_duration + finish_delay
         )
 
     def _command_from_current_position(

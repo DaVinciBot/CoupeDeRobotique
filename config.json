@@ -80,9 +80,9 @@
           "kd": 0.008
         },
         "angular_position": {
-          "kp": 0.15,
-          "ki": 0.001,
-          "kd": 0.01
+          "kp": 0.1,
+          "ki": 0.00,
+          "kd": 0.015
         },
         "left_wheel_position": {
           "kp": 10.0,

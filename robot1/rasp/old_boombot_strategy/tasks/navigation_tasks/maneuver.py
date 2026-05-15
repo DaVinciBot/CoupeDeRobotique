@@ -120,6 +120,9 @@ class GoCentroidOfZone(NavigationTask):
                 timeout=self.timeout,
                 position_reached_tolerance_cm=self.position_reached_tolerance_cm,
                 angle_reached_tolerance_rad=self.angle_reached_tolerance_rad,
+                finish_after_expected_end_delay_s=(
+                    self.finish_after_expected_end_delay_s
+                ),
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,

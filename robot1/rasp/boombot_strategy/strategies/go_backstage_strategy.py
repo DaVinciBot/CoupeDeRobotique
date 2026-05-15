@@ -17,8 +17,9 @@ from strategy.core.task_nodes import BaseTaskNode
 if TYPE_CHECKING:
     from boombot_strategy.winter_game_context import WinterGameContext
 
-POSITION_TOLERANCE_CM = 10.0
+POSITION_TOLERANCE_CM = 0.9
 ANGLE_TOLERANCE_RAD = 0.15
+FINISH_AFTER_EXPECTED_END_DELAY_S = 5
 
 
 class GoBackstageStrategy(BaseStrategy):
@@ -41,6 +42,7 @@ class GoBackstageStrategy(BaseStrategy):
                 distance=100.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
             ),
         )
 
@@ -50,6 +52,7 @@ class GoBackstageStrategy(BaseStrategy):
                 angle=math.pi / 2,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
             ),  # 90 degrees
         )
 
@@ -59,15 +62,17 @@ class GoBackstageStrategy(BaseStrategy):
                 distance=10.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                finish_after_expected_end_delay_s=FINISH_AFTER_EXPECTED_END_DELAY_S,
             ),
         )
 
         turn2 = BaseTaskNode(
             name="Turn 2",
             tasks=RelativeRotation(
-                angle=math.pi / 2,
+                angle=8*math.pi / 18,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
-                angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                angle_reached_tolerance_rad=0.05,
+                finish_after_expected_end_delay_s=20.0,
             ),  # 90 degrees
         )
 
@@ -77,6 +82,7 @@ class GoBackstageStrategy(BaseStrategy):
                 distance=100.0,
                 position_reached_tolerance_cm=POSITION_TOLERANCE_CM,
                 angle_reached_tolerance_rad=ANGLE_TOLERANCE_RAD,
+                finish_after_expected_end_delay_s=80.0,
             ),
         )
 

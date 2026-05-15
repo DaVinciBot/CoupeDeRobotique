@@ -48,6 +48,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         estimated_duration: float | Callable[[GameContextT], float] = 0.0,
         position_reached_tolerance_cm: float = DEFAULT_POSITION_REACHED_TOLERANCE_CM,
         angle_reached_tolerance_rad: float = DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+        finish_after_expected_end_delay_s: float | None = None,
     ) -> None:
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
@@ -77,6 +78,9 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                 Accepted position error before considering the goal reached.
             angle_reached_tolerance_rad (float, optional):
                 Accepted orientation error before considering the goal reached.
+            finish_after_expected_end_delay_s (float | None, optional):
+                Extra time after the planned trajectory duration before considering
+                the task finished even if the goal is not reached.
         """
         super().__init__(
             logger=logger,
@@ -94,6 +98,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         self.acs_detection_profile_params = acs_detection_profile_params
         self.position_reached_tolerance_cm = position_reached_tolerance_cm
         self.angle_reached_tolerance_rad = angle_reached_tolerance_rad
+        self.finish_after_expected_end_delay_s = finish_after_expected_end_delay_s
 
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
@@ -114,6 +119,9 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                 timeout=self.timeout,
                 position_reached_tolerance_cm=self.position_reached_tolerance_cm,
                 angle_reached_tolerance_rad=self.angle_reached_tolerance_rad,
+                finish_after_expected_end_delay_s=(
+                    self.finish_after_expected_end_delay_s
+                ),
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,

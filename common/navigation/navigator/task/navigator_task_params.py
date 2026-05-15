@@ -33,6 +33,7 @@ class NavigatorTaskParams:
         stabilization_delay: float,
         position_reached_tolerance_cm: float,
         angle_reached_tolerance_rad: float,
+        finish_after_expected_end_delay_s: float | None,
         # Parameters
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
@@ -50,6 +51,9 @@ class NavigatorTaskParams:
                 Accepted position error before considering the goal reached.
             angle_reached_tolerance_rad (float):
                 Accepted orientation error before considering the goal reached.
+            finish_after_expected_end_delay_s (float | None):
+                Extra time after the planned trajectory duration before considering
+                the task finished even if the goal is not reached.
             path_planner_params (BasePathPlannerParams):
                 The parameters for the path planner.
             trajectory_planner_params (BaseTrajectoryPlannerParams):
@@ -74,3 +78,6 @@ class NavigatorTaskParams:
         self.stabilization_delay: float = stabilization_delay
         self.position_reached_tolerance_cm: float = position_reached_tolerance_cm
         self.angle_reached_tolerance_rad: float = angle_reached_tolerance_rad
+        self.finish_after_expected_end_delay_s: float | None = (
+            finish_after_expected_end_delay_s
+        )
