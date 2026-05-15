@@ -38,6 +38,9 @@
 // Servo configuration
 #define SERVO_PIN 42
 
+// Tirette configuration
+#define TIRETTE_PIN 41
+
 // LoRa configuration
 #define LORA_RX_PIN 16
 #define LORA_TX_PIN 17
@@ -51,9 +54,10 @@
 #define LIDAR_TX_PIN 43
 
 // Development toggles
-#define ENABLE_DEBUG false
+#define ENABLE_DEBUG true
 #define ENABLE_OTA false
 #define ENABLE_LORA false
+#define ENABLE_HOMOLOGATION true
 
 #if ENABLE_DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)

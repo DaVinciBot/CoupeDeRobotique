@@ -227,6 +227,20 @@ void setup() {
     xTaskCreatePinnedToCore(lidarTask, "lidar", 4096, lidar, 1, NULL, 0);
     DEBUG_PRINTLN("Lidar task started on core 0");
 
+    // Tirette: attendre qu'elle soit branchée puis retirée
+    pinMode(TIRETTE_PIN, INPUT_PULLDOWN);
+    DEBUG_PRINTLN("Attente tirette...");
+    // Attendre que la tirette soit connectée (pin HIGH)
+    while (digitalRead(TIRETTE_PIN) == LOW) {
+        delay(50);
+    }
+    DEBUG_PRINTLN("Tirette connectee, attente retrait...");
+    // Attendre que la tirette soit retirée (pin LOW)
+    while (digitalRead(TIRETTE_PIN) == HIGH) {
+        delay(50);
+    }
+    DEBUG_PRINTLN("Tirette retiree, GO!");
+
 #if ENABLE_OTA
     ota.begin();
 #endif
@@ -244,9 +258,13 @@ void setup() {
 #endif
 
     // rollingBasis->moveForwardBlocking(100.0f);
-    strategy->addAction(new BlockingForward(rollingBasis, 1400.0f));
-    strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
-    strategy->start();
+    if(ENABLE_HOMOLOGATION){
+        strategy->addAction(new BlockingForward(rollingBasis, 1400.0f));
+        strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
+        strategy->start();
+    }else{
+        
+    }
 
     strategyRunning = true;
 }
