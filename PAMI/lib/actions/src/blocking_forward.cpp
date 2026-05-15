@@ -1,30 +1,16 @@
 #include "blocking_forward.h"
 
-lidar_pami* BlockingForward::_sLidar = nullptr;
-uint16_t BlockingForward::_sAcsDistance = 75;
-
-BlockingForward::BlockingForward(RollingBasis* rb, float distanceMm,
-                                 lidar_pami* lidar, uint16_t acsDistanceMm)
-    : _rb(rb), _distanceMm(distanceMm) {
-    _sLidar = lidar;
-    _sAcsDistance = acsDistanceMm;
-}
+BlockingForward::BlockingForward(RollingBasis* rb, float distanceMm)
+    : _rb(rb), _distanceMm(distanceMm) {}
 
 bool BlockingForward::shouldPause() {
-    if (_sLidar == nullptr) return false;
-    _sLidar->update();
-    bool paused = _sLidar->obstacleDirectlyAhead(_sAcsDistance);
-    if (paused) {
-        Serial.println("[ACS] Obstacle - pause");
-    }
-    return paused;
+    return acsBlocked;
 }
 
 void BlockingForward::start() {
     _started = true;
     _finished = false;
-    _rb->moveForwardBlocking(_distanceMm,
-                             _sLidar ? shouldPause : nullptr);
+    _rb->moveForwardBlocking(_distanceMm, shouldPause);
     _finished = true;
 }
 

@@ -37,7 +37,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
 }
 
 void RollingBasis::setCommand(const Point& target) {
-    Serial.printf(
+    DEBUG_PRINTF(
         "[RB:setCommand] target=(%.1f, %.1f, %.3f) current=(%.1f, %.1f, "
         "%.3f)\n",
         target.x, target.y, target.theta, _currentPose.x, _currentPose.y,
@@ -72,7 +72,7 @@ void RollingBasis::setCommand(const Point& target) {
         _currentPose.theta = _wrapToPi(target.theta);
     }
 
-    Serial.printf("[RB:setCommand] rotate=%.3fs forward=%.3fs phase=%d\n",
+    DEBUG_PRINTF("[RB:setCommand] rotate=%.3fs forward=%.3fs phase=%d\n",
                   _rotateDuration, _forwardDuration, static_cast<int>(_phase));
 }
 
@@ -100,10 +100,10 @@ void RollingBasis::update() {
 
         if (_forwardDuration > 0.0f) {
             _phase = Phase::Forwarding;
-            Serial.println("[RB] Rotation done -> Forwarding phase");
+            DEBUG_PRINTLN("[RB] Rotation done -> Forwarding phase");
         } else {
             _phase = Phase::Done;
-            Serial.println("[RB] Rotation done -> DONE phase");
+            DEBUG_PRINTLN("[RB] Rotation done -> DONE phase");
         }
         return;
     }
@@ -123,7 +123,7 @@ void RollingBasis::update() {
         _currentPose.y += _targetDistanceMm * sinf(_currentPose.theta);
 
         _phase = Phase::Done;
-        Serial.println("[RB] Forwarding done -> DONE phase");
+        DEBUG_PRINTLN("[RB] Forwarding done -> DONE phase");
     }
 }
 
@@ -178,7 +178,7 @@ bool RollingBasis::isMoving() const {
 }
 
 void RollingBasis::stop() {
-    Serial.printf("[RB:stop] Phase %d -> IDLE\n", static_cast<int>(_phase));
+    DEBUG_PRINTF("[RB:stop] Phase %d -> IDLE\n", static_cast<int>(_phase));
     _leftMotor->setTargetSpeed(0.0f);
     _rightMotor->setTargetSpeed(0.0f);
     _phase = Phase::Idle;
@@ -198,7 +198,7 @@ float RollingBasis::getAngularSpeedRadPerS() const {
 
 void RollingBasis::moveForwardBlocking(float distanceMm,
                                        PauseCheckFn shouldPause) {
-    Serial.printf("[Test] Blocking forward %.1f mm\n", distanceMm);
+    DEBUG_PRINTF("[Test] Blocking forward %.1f mm\n", distanceMm);
 
     float stepsFloat =
         distanceMm * _leftMotor->getStepsPerRev() / _wheelCircumferenceMm;
@@ -207,12 +207,12 @@ void RollingBasis::moveForwardBlocking(float distanceMm,
     moveForwardStepsBlocking(steps, shouldPause);
     _currentPose.x += distanceMm * cosf(_currentPose.theta);
     _currentPose.y += distanceMm * sinf(_currentPose.theta);
-    Serial.println("[Test] Blocking forward done");
+    DEBUG_PRINTLN("[Test] Blocking forward done");
 }
 
 void RollingBasis::moveForwardStepsBlocking(long steps,
                                             PauseCheckFn shouldPause) {
-    Serial.printf("[Test] Blocking forward %ld steps\n", steps);
+    DEBUG_PRINTF("[Test] Blocking forward %ld steps\n", steps);
 
     long targetSteps = labs(steps);
     if (targetSteps == 0) {
@@ -226,11 +226,15 @@ void RollingBasis::moveForwardStepsBlocking(long steps,
         static_cast<unsigned long>(1000000.0f / max(1.0f, stepsPerSec));
 
     for (long i = 0; i < targetSteps; ++i) {
-        // ACS pause: wait while obstacle detected
-        if (shouldPause != nullptr) {
+        // ACS pause: check every 10 steps
+        if (shouldPause != nullptr && i % 10 == 0 && shouldPause()) {
+            _leftMotor->stopManualStepping();
+            _rightMotor->stopManualStepping();
+            DEBUG_PRINTLN("[ACS] Pause");
             while (shouldPause()) {
-                delay(10);
+                vTaskDelay(1);
             }
+            DEBUG_PRINTLN("[ACS] Resume");
         }
 
         unsigned long startUs = micros();
@@ -247,13 +251,12 @@ void RollingBasis::moveForwardStepsBlocking(long steps,
     _leftMotor->stopManualStepping();
     _rightMotor->stopManualStepping();
 
-    Serial.printf("[Test] Blocking forward steps done: left=%ld right=%ld\n",
+    DEBUG_PRINTF("[Test] Blocking forward steps done: left=%ld right=%ld\n",
                   _leftMotor->getStepCount(), _rightMotor->getStepCount());
 }
 
-void RollingBasis::turnBlocking(float angleRad,
-                                PauseCheckFn shouldPause) {
-    Serial.printf("[Test] Blocking turn %.3f rad\n", angleRad);
+void RollingBasis::turnBlocking(float angleRad) {
+    DEBUG_PRINTF("[Test] Blocking turn %.3f rad\n", angleRad);
 
     _leftMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
     _rightMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
@@ -263,26 +266,10 @@ void RollingBasis::turnBlocking(float angleRad,
     float duration = fabsf(targetDTheta) / _angularSpeed;
     float dir = (targetDTheta >= 0.0f) ? 1.0f : -1.0f;
     unsigned long start = micros();
-    unsigned long pausedUs = 0;
 
     _sendWheelSpeeds(0.0f, _angularSpeed * dir);
 
-    while ((micros() - start - pausedUs) * 1e-6f < duration) {
-        // ACS pause: stop motors and wait
-        if (shouldPause != nullptr && shouldPause()) {
-            _leftMotor->setTargetSpeed(0.0f);
-            _rightMotor->setTargetSpeed(0.0f);
-            unsigned long pauseStart = micros();
-            while (shouldPause()) {
-                _leftMotor->update();
-                _rightMotor->update();
-                delay(10);
-            }
-            pausedUs += micros() - pauseStart;
-            // Resume rotation
-            _sendWheelSpeeds(0.0f, _angularSpeed * dir);
-        }
-
+    while ((micros() - start) * 1e-6f < duration) {
         _leftMotor->update();
         _rightMotor->update();
     }
@@ -297,5 +284,5 @@ void RollingBasis::turnBlocking(float angleRad,
     }
 
     _currentPose.theta = _wrapToPi(_currentPose.theta + targetDTheta);
-    Serial.println("[Test] Blocking turn done");
+    DEBUG_PRINTLN("[Test] Blocking turn done");
 }

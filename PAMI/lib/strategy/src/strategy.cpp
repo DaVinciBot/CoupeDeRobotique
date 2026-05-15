@@ -1,5 +1,7 @@
 #include "strategy.h"
 
+#include "../../../include/config.h"
+
 Strategy::Strategy(RollingBasis* rb) : _rb(rb) {}
 
 Strategy::Strategy(RollingBasis* rb, const std::vector<Action*>& actions)
@@ -11,14 +13,14 @@ Strategy::~Strategy() {
 
 void Strategy::addAction(Action* action) {
     if (action == nullptr) {
-        Serial.println("[Strategy] Ignored null action");
+        DEBUG_PRINTLN("[Strategy] Ignored null action");
         return;
     }
 
     _actions.push_back(action);
     _finished = false;
 
-    Serial.printf("[Strategy] Action added: %s (total: %u)\n", action->name(),
+    DEBUG_PRINTF("[Strategy] Action added: %s (total: %u)\n", action->name(),
                   static_cast<unsigned>(_actions.size()));
 }
 
@@ -45,7 +47,7 @@ void Strategy::startCurrentAction() {
     }
 
     Action* currentAction = _actions[_currentIndex];
-    Serial.printf("[Strategy] Starting action %u/%u: %s\n",
+    DEBUG_PRINTF("[Strategy] Starting action %u/%u: %s\n",
                   static_cast<unsigned>(_currentIndex + 1),
                   static_cast<unsigned>(_actions.size()),
                   currentAction->name());
@@ -59,12 +61,12 @@ void Strategy::start() {
     _stopped = false;
 
     if (_actions.empty()) {
-        Serial.println("[Strategy] No action to run");
+        DEBUG_PRINTLN("[Strategy] No action to run");
         _finished = true;
         return;
     }
 
-    Serial.println("[Strategy] Started");
+    DEBUG_PRINTLN("[Strategy] Started");
     startCurrentAction();
 }
 
@@ -85,7 +87,7 @@ void Strategy::update() {
         return;
     }
 
-    Serial.printf("[Strategy] Finished action %u/%u: %s\n",
+    DEBUG_PRINTF("[Strategy] Finished action %u/%u: %s\n",
                   static_cast<unsigned>(_currentIndex + 1),
                   static_cast<unsigned>(_actions.size()),
                   currentAction->name());
@@ -94,7 +96,7 @@ void Strategy::update() {
 
     if (_currentIndex >= _actions.size()) {
         _finished = true;
-        Serial.println("[Strategy] All actions finished");
+        DEBUG_PRINTLN("[Strategy] All actions finished");
         return;
     }
 
@@ -108,7 +110,7 @@ void Strategy::stop() {
 
     _stopped = true;
     _finished = true;
-    Serial.println("[Strategy] Stopped");
+    DEBUG_PRINTLN("[Strategy] Stopped");
 }
 
 bool Strategy::isFinished() const {

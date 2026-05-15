@@ -36,8 +36,7 @@ class RollingBasis {
                              PauseCheckFn shouldPause = nullptr);
     void moveForwardStepsBlocking(long steps,
                                   PauseCheckFn shouldPause = nullptr);
-    void turnBlocking(float angleRad,
-                      PauseCheckFn shouldPause = nullptr);
+    void turnBlocking(float angleRad);
     /**
      * @brief Enumeration representing the different phases of motion.
      *

@@ -22,7 +22,7 @@
 #define WHEEL_DIAMETER_MM 60.01f
 #define WHEEL_BASE_MM 200.0f
 
-#define MAX_LINEAR_SPEED_MM_PER_S 20.0f
+#define MAX_LINEAR_SPEED_MM_PER_S 40.0f
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
 #define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
 
@@ -51,8 +51,19 @@
 #define LIDAR_TX_PIN 43
 
 // Development toggles
+#define ENABLE_DEBUG false
 #define ENABLE_OTA false
 #define ENABLE_LORA false
+
+#if ENABLE_DEBUG
+#define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
+#define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
+#define DEBUG_PRINTF(...) Serial.printf(__VA_ARGS__)
+#else
+#define DEBUG_PRINT(...) ((void)0)
+#define DEBUG_PRINTLN(...) ((void)0)
+#define DEBUG_PRINTF(...) ((void)0)
+#endif
 
 // OTA Wi-Fi credentials
 #define OTA_WIFI_SSID "DVB"

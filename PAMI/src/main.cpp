@@ -27,6 +27,17 @@ HardwareSerial LidarSerial(1);
 lidar_pami* lidar =
     new lidar_pami(LidarSerial, LIDAR_RX_PIN, LIDAR_TX_PIN, true);
 
+volatile bool acsBlocked = false;
+
+void lidarTask(void* param) {
+    lidar_pami* lid = (lidar_pami*)param;
+    for (;;) {
+        lid->update();
+        acsBlocked = lid->obstacleDirectlyAhead(ACS_TRESHOLD);
+        vTaskDelay(pdMS_TO_TICKS(5));
+    }
+}
+
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,
                              LEFT_DIR_PIN,
                              LEFT_EN_PIN,
@@ -209,9 +220,11 @@ void setup() {
     }
 
     delay(2000);
-    Serial.println("\n--- DEMARRAGE ---");
+    DEBUG_PRINTLN("\n--- DEMARRAGE ---");
 
     lidar->begin();
+    xTaskCreatePinnedToCore(lidarTask, "lidar", 4096, lidar, 1, NULL, 0);
+    DEBUG_PRINTLN("Lidar task started on core 0");
 
 #if ENABLE_OTA
     ota.begin();
@@ -230,9 +243,9 @@ void setup() {
 #endif
 
     // rollingBasis->moveForwardBlocking(100.0f);
-    strategy->addAction(new BlockingForward(rollingBasis, 100.0f, lidar));
-    strategy->addAction(new GoTo(rollingBasis, Point{100.0f, 0.0f, 1.5708f}, lidar));
-    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f, lidar));
+    strategy->addAction(new BlockingForward(rollingBasis, 300.0f));
+    strategy->addAction(new GoTo(rollingBasis, Point{300.0f, 0.0f, 1.5708f}));
+    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f));
     strategy->start();
 
     strategyRunning = true;
@@ -245,7 +258,6 @@ void loop() {
 
     leftMotor->update();
     rightMotor->update();
-    lidar->update();
 
 #if ENABLE_LORA
     handleLoRaInput();
@@ -265,7 +277,7 @@ void loop() {
     }
 
     if (strategy->isFinished() && !strategyDoneLogged) {
-        Serial.println("--- STRATEGY TERMINEE ---");
+        DEBUG_PRINTLN("--- STRATEGY TERMINEE ---");
         strategyRunning = false;
         strategyDoneLogged = true;
     }

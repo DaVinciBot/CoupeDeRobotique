@@ -1,5 +1,7 @@
 #include "lidar_pami.h"
 
+#include "../../../include/config.h"
+
 lidar_pami::lidar_pami(HardwareSerial& serialPort,
                        int8_t rxPin,
                        int8_t txPin,
@@ -18,7 +20,7 @@ void lidar_pami::begin(uint32_t baud) {
     delay(100);
     sendScanCommand();
 
-    Serial.println("lidar_pami: scan command sent");
+    DEBUG_PRINTLN("lidar_pami: scan command sent");
 }
 
 void lidar_pami::sendScanCommand() {
@@ -64,7 +66,7 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
         return false;  // no valid points
     mean /= validCount;
 
-    Serial.printf("Mean distance: %f\n", mean);
+    DEBUG_PRINTF("Mean distance: %f\n", mean);
 
     return mean < distanceMin;
 }
@@ -145,7 +147,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     }
     mean /= POINT_COUNT;
 
-    Serial.printf("Mean distance: %f\n", mean);
+    // DEBUG_PRINTF("Mean distance: %f\n", mean);
 
     return mean < threshold;
 }
@@ -162,5 +164,5 @@ void lidar_pami::update() {
 
 void lidar_pami::onReceive(void (*callback)()) {
     _onReceiveCallback = callback;
-    Serial.println("lidar_pami: onReceive callback set");
+    DEBUG_PRINTLN("lidar_pami: onReceive callback set");
 }
