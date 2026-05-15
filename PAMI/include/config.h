@@ -46,6 +46,10 @@
 #define LORA_M1_PIN -1
 #define LORA_AUX_PIN 4
 
+// LIDAR configuration
+#define LIDAR_RX_PIN 44
+#define LIDAR_TX_PIN 43
+
 // Development toggles
 #define ENABLE_OTA false
 #define ENABLE_LORA false

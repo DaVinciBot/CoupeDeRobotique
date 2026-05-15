@@ -2,6 +2,7 @@
 #include "blocking_turn.h"
 #include "config.h"
 #include "go_to.h"
+#include "lidar_pami.h"
 #include "strategy.h"
 
 #if ENABLE_OTA
@@ -21,6 +22,10 @@ char loraRxBuffer[256];
 int loraRxPos = 0;
 int myPamiId = -1;
 #endif
+
+HardwareSerial LidarSerial(1);
+lidar_pami* lidar =
+    new lidar_pami(LidarSerial, LIDAR_RX_PIN, LIDAR_TX_PIN, true);
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,
                              LEFT_DIR_PIN,
@@ -206,6 +211,8 @@ void setup() {
     delay(2000);
     Serial.println("\n--- DEMARRAGE ---");
 
+    lidar->begin();
+
 #if ENABLE_OTA
     ota.begin();
 #endif
@@ -238,6 +245,7 @@ void loop() {
 
     leftMotor->update();
     rightMotor->update();
+    lidar->update();
 
 #if ENABLE_LORA
     handleLoRaInput();

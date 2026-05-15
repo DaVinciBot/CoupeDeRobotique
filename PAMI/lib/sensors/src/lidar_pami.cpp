@@ -31,8 +31,11 @@ bool lidar_pami::readFrame() {
     while (_serial.available() && _bufferIndex < PACKET_SIZE) {
         uint8_t b = _serial.read();
 
+        if (_debug && _bufferIndex < 10) {
+            Serial.printf("lidar: byte[%d]=0x%02X\n", _bufferIndex, b);
+        }
+
         if (_bufferIndex == 0 && b != FRAME_HEADER) {
-            // skip until header byte found
             continue;
         }
 
@@ -86,12 +89,32 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
 }
 
 void lidar_pami::update() {
-    if (_serial.available()) {
+    int avail = _serial.available();
+    if (avail > 0) {
+        if (_debug) {
+            Serial.printf("lidar: %d bytes avail, bufIdx=%d\n", avail,
+                          _bufferIndex);
+        }
         if (readFrame()) {
             if (_onReceiveCallback != nullptr) {
-                _onReceiveCallback();  // call the user-defined callback
+                _onReceiveCallback();
             }
-            Serial.println("lidar_pami: frame read");
+            // Affiche les premiers octets du header + quelques distances
+            Serial.print("lidar: frame OK | header: ");
+            for (int i = 0; i < HEADER_LEN; i++) {
+                Serial.printf("0x%02X ", _buffer[i]);
+            }
+            Serial.println();
+
+            // Affiche les 10 premières distances
+            Serial.print("lidar: distances: ");
+            for (uint16_t i = 0; i < 10; ++i) {
+                uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
+                uint16_t d = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
+                d &= 0x01FF;
+                Serial.printf("%d ", d);
+            }
+            Serial.println("mm");
         }
     }
 }
