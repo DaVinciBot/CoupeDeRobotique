@@ -138,7 +138,7 @@ class RollingBasis(BaseComTeensy):
             msg (bytes): The received message bytes.
         """
         text = msg.decode("ascii", errors="ignore")
-        self._logger.info(f"[CTRL:RB:Teensy] {text}")
+        # self._logger.info(f"[CTRL:RB:Teensy] {text}")
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
         """Handle rolling basis odometry update messages from the Teensy.

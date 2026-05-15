@@ -1,12 +1,12 @@
-"""HC-SR04 ultrasonic distance sensor used as a simple front obstacle detector."""
+"""GPIO-based front obstacle detector exposed through the lidar-like scan API."""
 
 from __future__ import annotations
 
-import time
+import math
 from typing import TYPE_CHECKING
 
 import numpy as np
-from gpiozero import DigitalInputDevice, DigitalOutputDevice
+from gpiozero import DigitalInputDevice
 from gpiozero.exc import BadPinFactory
 
 if TYPE_CHECKING:
@@ -19,13 +19,15 @@ GPIO_BACKEND_ERROR = (
     "or adding the user to the gpio group, then restart the session."
 )
 
-SPEED_OF_SOUND_CM_S = 34300.0
-TRIGGER_PULSE_S = 0.00001
+DETECTOR_GPIO_PIN = 27
+FAKE_OBSTACLE_DISTANCE_CM = 1.0
+FAKE_CLEAR_DISTANCE_CM = 80.0
+LOW_READS_TO_CONFIRM_OBSTACLE = 3
 DEFAULT_TIMEOUT_S = 0.03
 
 
 class UltrasonicDistanceSensor:
-    """Read an HC-SR04 sensor and expose the same scan API as the old lidar."""
+    """Read an active-low obstacle GPIO and expose the old lidar scan API."""
 
     def __init__(
         self,
@@ -35,16 +37,16 @@ class UltrasonicDistanceSensor:
         stop_distance: float = 20.0,
         timeout: float = DEFAULT_TIMEOUT_S,
     ) -> None:
-        """Initialize the HC-SR04 front distance sensor.
+        """Initialize the front obstacle detector.
 
         Args:
             logger (Logger): Logger instance for logging events.
-            trigger_pin (int): BCM GPIO pin connected to the Trigger pin.
-            echo_pin (int): BCM GPIO pin connected to the Echo pin.
+            trigger_pin (int): Kept for compatibility; ignored.
+            echo_pin (int): Kept for compatibility; ignored.
             stop_distance (float, optional):
-                Distance under which an obstacle is reported. Defaults to 20 cm.
+                Compatibility value; fake obstacle distance stays very close.
             timeout (float, optional):
-                Maximum wait time for the echo pulse. Defaults to 30 ms.
+                Kept for compatibility; ignored.
 
         Raises:
             RuntimeError: If the Raspberry Pi GPIO backend is unavailable.
@@ -53,19 +55,18 @@ class UltrasonicDistanceSensor:
         self._stop_distance = stop_distance
         self._timeout = timeout
         self._last_distance: float | None = None
+        self._low_reads_count = 0
         self.__is_connected = False
 
         try:
-            self._trigger = DigitalOutputDevice(trigger_pin, initial_value=False)
-            self._echo = DigitalInputDevice(echo_pin, pull_up=False)
+            self._detector = DigitalInputDevice(DETECTOR_GPIO_PIN, pull_up=False)
             self.__is_connected = True
         except BadPinFactory:
             raise RuntimeError(GPIO_BACKEND_ERROR) from None
 
         self._logger.info(
-            "[SENSOR:Ultrasonic] HC-SR04 initialized "
-            f"(trigger=GPIO{trigger_pin}, echo=GPIO{echo_pin}, "
-            f"stop={stop_distance:.1f}cm)",
+            "[SENSOR:Ultrasonic] Active-low GPIO detector initialized "
+            f"(detector=GPIO{DETECTOR_GPIO_PIN}, obstacle=0, clear=1)",
         )
 
     def is_connected(self, *, force_check: bool = False) -> bool:
@@ -79,80 +80,74 @@ class UltrasonicDistanceSensor:
             bool: ``True`` if the sensor is usable, ``False`` otherwise.
         """
         if force_check:
-            self._last_distance = self._measure_distance()
+            self._last_distance = self._read_fake_distance()
         return self.__is_connected
 
-    def _wait_for_echo_state(self, *, state: bool) -> float | None:
-        """Wait until Echo reaches the requested state.
-
-        Args:
-            state (bool): Expected Echo pin state.
+    def _read_fake_distance(self) -> float | None:
+        """Read the active-low detector and convert it to a fake distance.
 
         Returns:
-            float | None: Timestamp when the state is reached, or ``None`` on timeout.
+            float | None:
+                A very close distance when GPIO27 is low, otherwise ``None``.
         """
-        deadline = time.perf_counter() + self._timeout
-        while self._echo.is_active != state:
-            if time.perf_counter() >= deadline:
-                return None
-        return time.perf_counter()
-
-    def _measure_distance(self) -> float | None:
-        """Measure the front distance.
-
-        Returns:
-            float | None: Measured distance in centimeters, or ``None`` on timeout.
-        """
-        self._trigger.off()
-        time.sleep(0.000002)
-        self._trigger.on()
-        time.sleep(TRIGGER_PULSE_S)
-        self._trigger.off()
-
-        pulse_start = self._wait_for_echo_state(state=True)
-        if pulse_start is None:
-            self._logger.debug("[SENSOR:Ultrasonic] Echo start timeout")
+        if int(self._detector.value) == 0:
+            self._low_reads_count = 0
+            self._last_distance = None
             return None
 
-        pulse_end = self._wait_for_echo_state(state=False)
-        if pulse_end is None:
-            self._logger.debug("[SENSOR:Ultrasonic] Echo end timeout")
+        self._low_reads_count += 1
+        if self._low_reads_count < LOW_READS_TO_CONFIRM_OBSTACLE:
+            self._last_distance = None
             return None
 
-        pulse_duration = pulse_end - pulse_start
-        distance = pulse_duration * SPEED_OF_SOUND_CM_S / 2.0
-        self._last_distance = distance
-        return distance
+        self._last_distance = FAKE_OBSTACLE_DISTANCE_CM
+        return self._last_distance
 
     def scan_to_distances(self) -> NDArray[np.float32]:
-        """Measure the front distance and return it as a one-value array.
+        """Read the detector and return a fake one-value distance array.
 
         Returns:
-            NDArray[np.float32]: One distance in centimeters, or an empty array.
+            NDArray[np.float32]: Very close distance for GPIO low, or empty for high.
         """
-        distance = self._measure_distance()
+        distance = self._read_fake_distance()
         if distance is None:
             return np.empty(0, dtype=np.float32)
         return np.array([distance], dtype=np.float32)
 
     def scan_to_polars(self) -> NDArray[np.float32]:
-        """Return a front obstacle point when it is inside the stop distance."""
-        distance = self._measure_distance()
+        """Return fake lidar points for the current detector state.
+
+        Empty scans keep the previous enemy position in the arena, so the clear
+        state publishes far points instead of nothing.
+        """
+        distance = self._read_fake_distance()
         if distance is None or distance > self._stop_distance:
-            return np.empty((0, 2), dtype=np.float32)
+            # self._logger.info(
+            #     "[SENSOR:Ultrasonic] No obstacle detected. Publishing fake clear scan.",
+            # )
+            return np.array(
+                [
+                    [0.0, FAKE_CLEAR_DISTANCE_CM],
+                    [math.pi / 2, FAKE_CLEAR_DISTANCE_CM],
+                    [-math.pi / 2, FAKE_CLEAR_DISTANCE_CM],
+                    [math.pi, FAKE_CLEAR_DISTANCE_CM],
+                ],
+                dtype=np.float32,
+            )
+
+        self._logger.warning(
+            f"[SENSOR:Ultrasonic] Obstacle detected at {distance:.1f} cm. "
+            "Publishing fake obstacle scan.",
+        )
 
         return np.array([[0.0, distance]], dtype=np.float32)
 
     @property
     def distances(self) -> NDArray[np.float32]:
-        """Get the latest measured distance in centimeters."""
-        if self._last_distance is None:
-            return self.scan_to_distances()
-        return np.array([self._last_distance], dtype=np.float32)
+        """Read the detector and return the current fake distance."""
+        return self.scan_to_distances()
 
     @property
     def polars(self) -> NDArray[np.float32]:
-        """Get the latest front obstacle point if it is inside the stop distance."""
-        if self._last_distance is None or self._last_distance > self._stop_distance:
-            return np.empty((0, 2), dtype=np.float32)
-        return np.array([[0.0, self._last_distance]], dtype=np.float32)
+        """Read the detector and return the current fake obstacle point."""
+        return self.scan_to_polars()
