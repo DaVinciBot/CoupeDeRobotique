@@ -235,6 +235,11 @@ void setup() {
     DEBUG_PRINTLN("Lidar task started on core 0");
 #endif
 
+    // Tirette couleur : lire avant le départ
+    pinMode(COLOR_PIN_VCC, OUTPUT);
+    digitalWrite(COLOR_PIN_VCC, HIGH);
+    pinMode(COLOR_PIN_READ, INPUT_PULLDOWN);
+
     // Tirette: attendre qu'elle soit branchée puis retirée
     pinMode(TIRETTE_PIN, INPUT_PULLDOWN);
     DEBUG_PRINTLN("Attente tirette...");
@@ -265,29 +270,35 @@ void setup() {
     Serial.printf("LoRa: ID recu = %d, demarrage strategy.\n", myPamiId);
 #endif
 
-    // rollingBasis->moveForwardBlocking(100.0f);
+    // Lecture couleur : 0 = tirette, 1 = jaune forcé, -1 = bleu forcé
+    int colorInversion = COLOR_INVERSION;
+    if (colorInversion == 0) {
+        colorInversion = digitalRead(COLOR_PIN_READ) == HIGH ? 1 : -1;
+    }
+    DEBUG_PRINTF("Couleur: %s (%d)\n",
+                 colorInversion == 1 ? "JAUNE" : "BLEU", colorInversion);
+
     if(ENABLE_HOMOLOGATION){
         strategy->addAction(new Wait(5000));
         strategy->addAction(new BlockingForward(rollingBasis, 400.0f));
         strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         strategy->start();
     }else{
-        int16_t colorinversion = 1; // 1 ou -1 pour inverser les couleurs si besoin
         if(ENABLE_NINJA){
             strategy->addAction(new Wait(1000));
             strategy->addAction(new BlockingForward(rollingBasis, 5.0f));
-            strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.48f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.48f));
             strategy->addAction(new BlockingForward(rollingBasis, 17.0f));
-            strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * -0.70f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.70f));
             strategy->addAction(new BlockingForward(rollingBasis, 75.0f));
             strategy->addAction(new BlockingForward(rollingBasis, -100.0f));
             strategy->addAction(new BlockingForward(rollingBasis, 15.0f));
-            strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.70f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.70f));
             strategy->addAction(new BlockingForward(rollingBasis, 75.0f));
         }else{
             strategy->addAction(new Wait(1000));
             strategy->addAction(new BlockingForward(rollingBasis, 160.0f));
-            strategy->addAction(new BlockingTurn(rollingBasis, colorinversion * 0.45f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.45f));
             strategy->addAction(new BlockingForward(rollingBasis, 105.0f));
             strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         }

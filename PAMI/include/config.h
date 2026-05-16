@@ -3,11 +3,52 @@
 
 #include <Arduino.h>
 
-// General configuration
-#define ACS_TRESHOLD 75  // Threshold for ACS activation in mm
-#define MICROSTEPPING_FACTOR 4
+// ============================================================
+// PAMI SELECTION : 1 = Normal, 2 = Ninja
+// ============================================================
+#define PAMI_ID 1
 
-// Motor configuration
+// COLOR_INVERSION : 0 = tirette, 1 = jaune forcé, -1 = bleu forcé
+#define COLOR_INVERSION 1
+
+// ============================================================
+// Config par PAMI
+// ============================================================
+#if PAMI_ID == 1
+// --- PAMI Normal ---
+#define MICROSTEPPING_FACTOR 4
+#define MAX_LINEAR_SPEED_MM_PER_S 40.0f
+#define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
+#define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
+#define WHEEL_DIAMETER_MM 60.01f
+#define WHEEL_BASE_MM 200.0f
+#define ACS_TRESHOLD 75
+#define ENABLE_LIDAR false
+#define ENABLE_HOMOLOGATION false
+#define ENABLE_NINJA false
+
+#elif PAMI_ID == 2
+// --- PAMI Ninja ---
+#define MICROSTEPPING_FACTOR 8
+#define MAX_LINEAR_SPEED_MM_PER_S 40.0f
+#define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
+#define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
+#define WHEEL_DIAMETER_MM 60.01f
+#define WHEEL_BASE_MM 200.0f
+#define ACS_TRESHOLD 75
+#define ENABLE_LIDAR true
+#define ENABLE_HOMOLOGATION true
+#define ENABLE_NINJA false
+
+#else
+#error "PAMI_ID invalide : utiliser 1 (Normal) ou 2 (Ninja)"
+#endif
+
+// ============================================================
+// Config commune (pins, hardware)
+// ============================================================
+
+// Motor pins
 #define LEFT_DIR_PIN 3
 #define LEFT_STEP_PIN 46
 #define LEFT_EN_PIN 9
@@ -19,12 +60,6 @@
 #define RIGHT_STEPS_PER_REV 400 * MICROSTEPPING_FACTOR
 
 #define PULSE_US 500
-#define WHEEL_DIAMETER_MM 60.01f
-#define WHEEL_BASE_MM 200.0f
-
-#define MAX_LINEAR_SPEED_MM_PER_S 40.0f
-#define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
-#define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
 
 // PID configuration
 #define LINEAR_DISTANCE_KP 2000.0f
@@ -41,6 +76,10 @@
 // Tirette configuration
 #define TIRETTE_PIN 41
 
+// Tirette couleur (jaune/bleu)
+#define COLOR_PIN_VCC 14
+#define COLOR_PIN_READ 15
+
 // LoRa configuration
 #define LORA_RX_PIN 16
 #define LORA_TX_PIN 17
@@ -54,12 +93,9 @@
 #define LIDAR_TX_PIN 43
 
 // Development toggles
-#define ENABLE_DEBUG false
-#define ENABLE_LIDAR true
+#define ENABLE_DEBUG true
 #define ENABLE_OTA false
 #define ENABLE_LORA false
-#define ENABLE_HOMOLOGATION true
-#define ENABLE_NINJA false
 
 #if ENABLE_DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
