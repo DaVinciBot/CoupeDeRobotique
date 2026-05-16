@@ -66,7 +66,7 @@
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__)
 #define DEBUG_PRINTF(...) Serial.printf(__VA_ARGS__)
 #else
-#define DEBUG_PRINT(...) ((void)0)
+#define DEBUG_PRINT(...) ((void)0) // do {} while(false)
 #define DEBUG_PRINTLN(...) ((void)0)
 #define DEBUG_PRINTF(...) ((void)0)
 #endif

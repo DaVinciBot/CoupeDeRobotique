@@ -219,9 +219,12 @@ void handleLoRaInput() {
 
 void setup() {
     Serial.begin(115200);
-    while (!Serial) {
+    unsigned long serialWait = millis();
+    /*
+    while (!Serial && millis() - serialWait < 3000) {
         delay(100);
     }
+        */
 
     delay(2000);
     DEBUG_PRINTLN("\n--- DEMARRAGE ---");
@@ -265,11 +268,11 @@ void setup() {
     // rollingBasis->moveForwardBlocking(100.0f);
     if(ENABLE_HOMOLOGATION){
         strategy->addAction(new Wait(5000));
-        strategy->addAction(new BlockingForward(rollingBasis, 1400.0f));
+        strategy->addAction(new BlockingForward(rollingBasis, 400.0f));
         strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
         strategy->start();
     }else{
-        int16_t colorinversion = -1; // 1 ou -1 pour inverser les couleurs si besoin
+        int16_t colorinversion = 1; // 1 ou -1 pour inverser les couleurs si besoin
         if(ENABLE_NINJA){
             strategy->addAction(new Wait(1000));
             strategy->addAction(new BlockingForward(rollingBasis, 5.0f));

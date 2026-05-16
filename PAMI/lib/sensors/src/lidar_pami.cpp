@@ -147,7 +147,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     }
     mean /= POINT_COUNT;
 
-    // DEBUG_PRINTF("Mean distance: %f\n", mean);
+    DEBUG_PRINTF("Mean distance: %f\n", mean);
 
     return mean < threshold;
 }
