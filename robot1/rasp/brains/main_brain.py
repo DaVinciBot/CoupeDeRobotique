@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import time
 import traceback
+from contextlib import suppress
 from math import pi
 from typing import TYPE_CHECKING, Any
 
@@ -16,16 +17,16 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import GoBackstageStrategy
-from boombot_strategy.sub_graphs import (
+from botladyyy_strategy import WinterGameContext
+from botladyyy_strategy.strategies import GoBackstageStrategy
+from botladyyy_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
     get_construct_subgraph,
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
-from boombot_strategy.tasks.navigation_tasks import (
+from botladyyy_strategy.tasks.navigation_tasks import (
     GoToOrientedPoint,
     RelativeBackward,
     RelativeForward,
@@ -36,12 +37,37 @@ from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
+from sensors import LidarError
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
+NORMAL_MATCH_TIMEOUT_S = 100.0
+ZERO_PID = {"kp": 0.0, "ki": 0.0, "kd": 0.0}
+
+
+def set_zero_pids(rolling_basis: RollingBasis | RollingBasisDummy) -> None:
+    """Disable all rolling basis PID controllers."""
+    rolling_basis.set_pids(
+        linear_position_pid=ZERO_PID,
+        angular_position_pid=ZERO_PID,
+        left_wheel_position_pid=ZERO_PID,
+        right_wheel_position_pid=ZERO_PID,
+    )
+
+
+def get_relative_rotation_sign(team_color: TeamColor) -> float:
+    """Return the team-dependent sign for relative rotations.
+
+    Positive relative rotations are calibrated for the blue team.
+    """
+    if team_color == TeamColor.BLUE:
+        return -1.0
+    return 1.0
+
+
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
-    from sensors import Inputs, Lidar, LidarDummy
+    from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
     from strategy.core.tasks import BaseTask
 
 
@@ -52,7 +78,7 @@ class MainBrain(Brain):
         self,
         logger: Logger,
         # Sensor
-        lidar: Lidar | LidarDummy,
+        lidar: Lidar | LidarDummy | UltrasonicDistanceSensor,
         # Environment
         arena: WinterArena,
         # WS routes
@@ -65,13 +91,14 @@ class MainBrain(Brain):
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
+            lidar (Lidar | LidarDummy | UltrasonicDistanceSensor):
+                Distance sensor instance for obstacle measurements.
             arena (ShowArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
-        self.lidar: Lidar | LidarDummy = lidar
+        self.lidar: Lidar | LidarDummy | UltrasonicDistanceSensor = lidar
         self.arena: WinterArena = arena
         self.mode: str | None = None
         self.status: str = "launching"
@@ -168,9 +195,9 @@ class MainBrain(Brain):
                     ),
                 )
 
-            init_stage = "rolling basis PID initialization"
+            init_stage = "rolling basis PID disable before jack plug"
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-            rolling_basis.initialize_pids()
+            set_zero_pids(rolling_basis)
 
             init_stage = "actuators setup"
             if CONFIG.ACTUATORS_DUMMY:
@@ -208,6 +235,9 @@ class MainBrain(Brain):
             while not self.jack_triggered:  # wait for the trigger event
                 time.sleep(0.1)
 
+            match_start_time = time.monotonic()
+            normal_match_timeout_sent = False
+
             # --- 3) Build the strategy --- #
             init_stage = "strategy creation"
             if self.mode == "iihm":
@@ -220,6 +250,7 @@ class MainBrain(Brain):
                         actuators=actuators,
                         point=self.score,
                     ),
+                    rotation_sign=get_relative_rotation_sign(self.arena.team_color),
                 )
 
             self.should_send_start = True
@@ -235,6 +266,11 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
+        normal_match_timed_out = (
+            self.mode == "normal"
+            and time.monotonic() - match_start_time >= NORMAL_MATCH_TIMEOUT_S
+        )
+
         context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
@@ -242,7 +278,20 @@ class MainBrain(Brain):
             point=self.score,
         )
 
-        if strategy:
+        if normal_match_timed_out:
+            action_holder[0] = None
+            if not normal_match_timeout_sent:
+                self.logger.info(
+                    "[BRAIN:Match] Normal mode timeout reached; stopping robot.",
+                )
+                rolling_basis.set_target_position(rolling_basis.odometrie)
+                rolling_basis.set_motors_pwm(
+                    left_pwm=0,
+                    right_pwm=0,
+                    duration_ms=100,
+                )
+                normal_match_timeout_sent = True
+        elif strategy:
             strategy.runner.handle(context)
         else:
             if self.should_update_task:
@@ -360,12 +409,17 @@ class MainBrain(Brain):
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
 
-        if self.should_send_direct_pwm:
+        if self.should_send_direct_pwm and not normal_match_timed_out:
             action_holder[0] = None
             rolling_basis.set_motors_pwm(
                 left_pwm=self.direct_pwm_left,
                 right_pwm=self.direct_pwm_right,
                 duration_ms=self.direct_pwm_duration_ms,
+            )
+            self.should_send_direct_pwm = False
+        elif self.should_send_direct_pwm and normal_match_timed_out:
+            self.logger.warning(
+                "[BRAIN:Match] Ignoring direct PWM request after normal mode timeout.",
             )
             self.should_send_direct_pwm = False
 
@@ -599,9 +653,14 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         """Updates the arena with the current position of the robot."""
+        lidar_scan_polars = np.empty((0, 2), dtype=np.float32)
+        if self.lidar.is_connected():
+            with suppress(LidarError):
+                lidar_scan_polars = self.lidar.scan_to_polars()
+
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),
+            lidar_scan_polars=lidar_scan_polars,
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -696,7 +755,7 @@ class MainBrain(Brain):
         self.logger.info(
             "Waiting for team color on IIHM...",
         )
-        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY:
             await self.wait_for_team()
             self.logger.warning(
                 "[BRAIN:Init] All subsystems in DUMMY mode.",

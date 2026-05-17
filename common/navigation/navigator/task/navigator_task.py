@@ -7,15 +7,17 @@ import time
 from typing import TYPE_CHECKING, cast
 
 from navigation.navigator.task.states import NavigatorTaskState
-from navigation.path_planner import PathPlannerFactory, PathPlannerPathPlanParamsFactory
+from navigation.path_planner import (
+    PathPlannerFactory,
+    PathPlannerPathPlanParamsFactory,
+    PathPlanningStrategy,
+)
 from navigation.trajectory_planner import (
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
 )
 
 TRACKING_LOOKAHEAD_S = 0.25
-POSITION_REACHED_TOLERANCE_CM = 1.0
-ANGLE_REACHED_TOLERANCE_RAD = 0.05
 SPEED_EPSILON = 1e-9
 
 if TYPE_CHECKING:
@@ -118,12 +120,61 @@ class NavigatorTask:
         )
         return self.current_trajectory_command
 
+    def start_replanned_trajectory(
+        self,
+        path: list[OrientedPoint],
+        current_position: OrientedPoint,
+    ) -> TrajectoryPlanCommand:
+        self._planned_goal = path[-1] if path else current_position
+        self.trajectory_planner.plan_trajectory(path)
+        self.trajectory_planner.start_planning()
+        self._start_time = time.time()
+        self._stabilization_start_time = None
+        self.state = NavigatorTaskState.IN_PROGRESS
+
+        planned_cmd = self.trajectory_planner.get_plan()
+        self.current_trajectory_command = self._command_from_current_position(
+            planned_cmd,
+            current_position,
+        )
+        return self.current_trajectory_command
+
+    def start_replanned_trajectory_from_current_position(
+        self,
+        current_position: OrientedPoint,
+    ) -> TrajectoryPlanCommand:
+        """Replan after avoidance without restarting relative delta tasks.
+
+        Delta tasks already computed an absolute ``_planned_goal`` during the
+        initial plan. Reusing their original delta from the current position would
+        repeat the full relative move after every avoidance interruption.
+        """
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.DELTA
+            and self._planned_goal is not None
+        ):
+            return self.start_replanned_trajectory(
+                [current_position, self._planned_goal],
+                current_position,
+            )
+
+        last_params = cast(
+            "BasePathPlannerPlanPathParams",
+            self.path_planner.last_plan_path_params,
+        )
+        last_params.start = current_position
+        return self.start_replanned_trajectory(
+            self.path_planner.plan_path(last_params),
+            current_position,
+        )
+
     def _is_goal_reached(self, current_position: OrientedPoint) -> bool:
         goal = self._planned_goal or self.params.goal
         if goal is None:
             return False
 
-        if current_position.distance(goal) > POSITION_REACHED_TOLERANCE_CM:
+        if current_position.distance(goal) > self.params.position_reached_tolerance_cm:
             return False
 
         if current_position.theta is None or goal.theta is None:
@@ -131,15 +182,22 @@ class NavigatorTask:
 
         return (
             abs(self._normalize_angle(goal.theta - current_position.theta))
-            <= ANGLE_REACHED_TOLERANCE_RAD
+            <= self.params.angle_reached_tolerance_rad
         )
 
     def _is_finished(self, current_position: OrientedPoint) -> bool:
         if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
             return False
+        total_duration = self.trajectory_planner.get_total_duration()
+        elapsed_time = self._get_elapsed_time()
+        if elapsed_time <= total_duration:
+            return False
+        if self._is_goal_reached(current_position):
+            return True
+        finish_delay = self.params.finish_after_expected_end_delay_s
         return (
-            self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
-            and self._is_goal_reached(current_position)
+            finish_delay is not None
+            and elapsed_time > total_duration + finish_delay
         )
 
     def _command_from_current_position(
@@ -238,6 +296,13 @@ class NavigatorTask:
 
         if self._has_timed_out():
             return self._abort(ally_zone.point)
+
+        if self.state == NavigatorTaskState.AVOIDING:
+            return self.avoidance.handle(
+                current_navigator_task=self,
+                ally_zone=ally_zone,
+                enemy_zone=enemy_zone,
+            )
 
         planned_cmd = self.trajectory_planner.get_plan()
         cmd = self._command_from_current_position(planned_cmd, ally_zone.point)

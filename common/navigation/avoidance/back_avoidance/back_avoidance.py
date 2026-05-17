@@ -17,6 +17,10 @@ from navigation.navigator.task import (
     NavigatorTaskParams,
     NavigatorTaskState,
 )
+from navigation.navigator.task.navigator_task_params import (
+    DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+    DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+)
 from navigation.path_planner import Direction
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
@@ -31,7 +35,6 @@ if TYPE_CHECKING:
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,
     )
-    from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
     from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
@@ -110,6 +113,9 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                     goal=None,
                     timeout=None,
                     stabilization_delay=0.0,
+                    position_reached_tolerance_cm=DEFAULT_POSITION_REACHED_TOLERANCE_CM,
+                    angle_reached_tolerance_rad=DEFAULT_ANGLE_REACHED_TOLERANCE_RAD,
+                    finish_after_expected_end_delay_s=None,
                     path_planner_params=DeltaPathPlannerParams(
                         distance=self.params.backward_distance,
                     ),
@@ -159,18 +165,13 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ):
             self._logger.info("[NAV:Avoid] Obstacle cleared - replanning trajectory")
 
-            # Obstacle is no longer detected, replan from current position
-            last_params = cast(
-                "BasePathPlannerPlanPathParams",
-                current_navigator_task.path_planner.last_plan_path_params,
-            )
-            last_params.start = position  # Update start position to current location
-
             self._logger.debug(f"[NAV:Avoid] Replanning from: {position}")
 
-            new_path = current_navigator_task.path_planner.plan_path(last_params)
-            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
-            current_navigator_task.trajectory_planner.start_planning()
+            cmd = (
+                current_navigator_task.start_replanned_trajectory_from_current_position(
+                    position,
+                )
+            )
 
             self._logger.debug("[NAV:Avoid] Trajectory planner clock reset")
             # reset timer just for logging/manure measurement
@@ -178,13 +179,9 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self._logger.debug("[NAV:Avoid] Timer reset")
 
             self.state = AvoidanceState.IDLE
-            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self._logger.info("[NAV:Avoid] Complete - resuming normal operation")
-            return cast(
-                "TrajectoryPlanCommand",
-                current_navigator_task.current_trajectory_command,
-            )  # Avoidance complete, continue as normal
+            return cmd
 
         # 4. Continue with current command
         self._logger.debug("[NAV:Avoid] No action required - continuing trajectory")

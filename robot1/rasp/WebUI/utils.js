@@ -1,7 +1,11 @@
 class WebSocketManager {
   #status = "disconnected";
 
-  constructor(host = "localhost", port = "8080", user = "ui") {
+  constructor(
+    host = window.location.hostname || "localhost",
+    port = "8080",
+    user = "ui"
+  ) {
     this.websockets = {};
     this.host = host;
     this.port = port;
@@ -39,9 +43,10 @@ class WebSocketManager {
   }
 
   #ws_connect(route) {
-    return new WebSocket(
-      `ws://${this.host}:${this.port}/${route}?sender=${this.user}`
-    );
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const url = `${protocol}://${this.host}:${this.port}/${route}?sender=${this.user}`;
+    console.log(`WebSocket connection: ${url}`);
+    return new WebSocket(url);
   }
 
   add_ws(route, { onopen, onmessage, onclose, onerror } = {}) {

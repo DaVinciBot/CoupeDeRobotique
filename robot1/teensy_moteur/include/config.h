@@ -25,8 +25,8 @@
 // Creation Rolling Basis
 // Motor
 #define MAX_PWM 240
-#define L_MIN_MOVING_PWM 100
-#define R_MIN_MOVING_PWM 100
+#define L_MIN_MOVING_PWM 144
+#define R_MIN_MOVING_PWM 144
 #define MOTOR_PWM_SLEW_PER_CYCLE 15
 
 // Encoder

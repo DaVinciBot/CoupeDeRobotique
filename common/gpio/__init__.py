@@ -9,9 +9,10 @@ _logger = LogLogger(
 
 try:
     from gpio.gpio import PIN
-except ImportError:
+except ImportError as exc:
     _logger.warning(
-        "[GPIO] Failed to import GPIO module - ensure library is installed",
+        "[GPIO] Failed to import GPIO module: %s",
+        exc,
     )
     _logger.info("[GPIO] Falling back to dummy PIN class")
     from gpio.dummy_gpio import PIN

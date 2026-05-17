@@ -37,4 +37,4 @@ class BackAvoidanceParams(BaseAvoidanceParams):
         """
         self.backward_distance: float = backward_distance
         self.backward_speed_profiler: SpeedProfiler = backward_speed_profiler
-        super().__init__(AvoidanceStrategy.BACK, timeout * 1000.0)
+        super().__init__(AvoidanceStrategy.BACK, timeout)
