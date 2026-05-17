@@ -1,4 +1,4 @@
-"""Main entry point to run the Boombot demo on the Raspberry Pi."""
+"""Main entry point to run the botladyyy demo on the Raspberry Pi."""
 
 from __future__ import annotations
 
@@ -156,9 +156,7 @@ if __name__ == "__main__":
     # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
     full_dummy_mode = (
-        CONFIG.LIDAR_DUMMY
-        and CONFIG.ROLLING_BASIS_DUMMY
-        and CONFIG.ACTUATORS_DUMMY
+        CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY
     )
     inputs = Inputs(
         pin_jack=CONFIG.JACK_PIN,

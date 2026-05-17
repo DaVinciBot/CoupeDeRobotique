@@ -17,16 +17,16 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import GoBackstageStrategy
-from boombot_strategy.sub_graphs import (
+from botladyyy_strategy import WinterGameContext
+from botladyyy_strategy.strategies import GoBackstageStrategy
+from botladyyy_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
     get_construct_subgraph,
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
-from boombot_strategy.tasks.navigation_tasks import (
+from botladyyy_strategy.tasks.navigation_tasks import (
     GoToOrientedPoint,
     RelativeBackward,
     RelativeForward,
