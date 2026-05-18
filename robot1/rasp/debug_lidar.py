@@ -14,7 +14,6 @@ import serial
 import serial.tools.list_ports
 import usb.core
 
-
 SICK_USB_VID = 0x19A2
 SICK_USB_PID = 0x5001
 SERIAL_BAUDRATES = (9600, 19200, 38400, 57600, 115200, 230400, 500000, 1000000)
@@ -45,10 +44,15 @@ def print_usb_devices() -> None:
         return
 
     for dev in devices:
-        marker = " <- expected SICK LiDAR" if (dev.idVendor, dev.idProduct) == (
-            SICK_USB_VID,
-            SICK_USB_PID,
-        ) else ""
+        marker = (
+            " <- expected SICK LiDAR"
+            if (dev.idVendor, dev.idProduct)
+            == (
+                SICK_USB_VID,
+                SICK_USB_PID,
+            )
+            else ""
+        )
         print(f"{dev.idVendor:04x}:{dev.idProduct:04x}{marker}")
 
 

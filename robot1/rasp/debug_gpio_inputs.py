@@ -20,9 +20,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
-for import_path in (REPO_ROOT / "common", REPO_ROOT / "robot1", REPO_ROOT / "robot1" / "rasp"):
+for import_path in (
+    REPO_ROOT / "common",
+    REPO_ROOT / "robot1",
+    REPO_ROOT / "robot1" / "rasp",
+):
     sys.path.insert(0, str(import_path))
 
 

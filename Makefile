@@ -21,7 +21,7 @@ check: format lint
 docs:
 	@echo "▶ Génération de la documentation avec pdoc..."
 	find docs/* -mindepth 0 -maxdepth 0 ! -name pdoc_templates -exec rm -rf {} +
-	pdoc -o docs -d google -t docs/pdoc_templates common rasp
+	PYTHONPATH="common;robot1;robot1/rasp" pdoc -o docs -d google -t docs/pdoc_templates common rasp
 
 auto:
 	make all

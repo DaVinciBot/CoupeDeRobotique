@@ -1,6 +1,6 @@
 """Simple MJPEG video streaming utilities."""
 
-from video.server import MJPEGHandler, spawn_video_server
+from .server import MJPEGHandler, spawn_video_server
 
 __all__ = [
     "MJPEGHandler",

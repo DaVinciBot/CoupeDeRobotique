@@ -195,10 +195,7 @@ class NavigatorTask:
         if self._is_goal_reached(current_position):
             return True
         finish_delay = self.params.finish_after_expected_end_delay_s
-        return (
-            finish_delay is not None
-            and elapsed_time > total_duration + finish_delay
-        )
+        return finish_delay is not None and elapsed_time > total_duration + finish_delay
 
     def _command_from_current_position(
         self,

@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import Any
 
-import cv2
+try:
+    import cv2
+except ModuleNotFoundError:
+    cv2: Any = None
 
 from log_manager import LogLogger
 
@@ -41,6 +45,11 @@ class MJPEGHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # pylint: disable=invalid-name
         """Serve the MJPEG stream or index page depending on the path."""
         if self.path.endswith(".mjpg"):
+            if cv2 is None:
+                raise RuntimeError(
+                    "OpenCV is required to serve MJPEG streams. "
+                    "Install the optional 'opencv-python' dependency.",
+                )
             self.send_response(200)
             self.send_header(
                 "Content-type",

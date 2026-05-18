@@ -94,6 +94,7 @@ class Lidar:
         """
         try:
             import pysicktim as lidar  # noqa: PLC0415
+
             lidar = reload(lidar)
         except Exception as error:
             self._logger.critical(
