@@ -6,17 +6,17 @@
 // ============================================================
 // PAMI SELECTION : 1 = Normal, 2 = Ninja
 // ============================================================
-#define PAMI_ID 1
+#define PAMI_ID 2
 
 // COLOR_INVERSION : 0 = tirette, 1 = jaune forcé, -1 = bleu forcé
-#define COLOR_INVERSION 1
+#define COLOR_INVERSION -1
 
 // ============================================================
 // Config par PAMI
 // ============================================================
 #if PAMI_ID == 1
 // --- PAMI Normal ---
-#define MICROSTEPPING_FACTOR 4
+#define MICROSTEPPING_FACTOR 8
 #define MAX_LINEAR_SPEED_MM_PER_S 40.0f
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
 #define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
@@ -29,16 +29,16 @@
 
 #elif PAMI_ID == 2
 // --- PAMI Ninja ---
-#define MICROSTEPPING_FACTOR 8
+#define MICROSTEPPING_FACTOR 4
 #define MAX_LINEAR_SPEED_MM_PER_S 40.0f
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
 #define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
 #define WHEEL_DIAMETER_MM 60.01f
 #define WHEEL_BASE_MM 200.0f
 #define ACS_TRESHOLD 75
-#define ENABLE_LIDAR true
-#define ENABLE_HOMOLOGATION true
-#define ENABLE_NINJA false
+#define ENABLE_LIDAR false
+#define ENABLE_HOMOLOGATION false
+#define ENABLE_NINJA true 
 
 #else
 #error "PAMI_ID invalide : utiliser 1 (Normal) ou 2 (Ninja)"

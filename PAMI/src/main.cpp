@@ -285,7 +285,7 @@ void setup() {
         strategy->start();
     }else{
         if(ENABLE_NINJA){
-            strategy->addAction(new Wait(1000));
+            strategy->addAction(new Wait(2000));
             strategy->addAction(new BlockingForward(rollingBasis, 5.0f));
             strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.48f));
             strategy->addAction(new BlockingForward(rollingBasis, 17.0f));
@@ -295,12 +295,15 @@ void setup() {
             strategy->addAction(new BlockingForward(rollingBasis, 15.0f));
             strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.70f));
             strategy->addAction(new BlockingForward(rollingBasis, 75.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.65f));
+            strategy->addAction(new BlockingForward(rollingBasis, 35.0f));
+            strategy->addAction(new ActionneurSweep(SERVO_PIN, 1000000));
         }else{
-            strategy->addAction(new Wait(1000));
-            strategy->addAction(new BlockingForward(rollingBasis, 160.0f));
-            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.45f));
-            strategy->addAction(new BlockingForward(rollingBasis, 105.0f));
-            strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
+            strategy->addAction(new Wait(85000));
+            strategy->addAction(new BlockingForward(rollingBasis, 300.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.75f));
+            strategy->addAction(new BlockingForward(rollingBasis, 230.0f));
+            strategy->addAction(new ActionneurSweep(SERVO_PIN, 1000000));
         }
         strategy->start();
     }
