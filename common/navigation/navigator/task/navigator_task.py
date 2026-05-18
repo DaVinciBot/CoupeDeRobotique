@@ -148,6 +148,12 @@ class NavigatorTask:
         Delta tasks already computed an absolute ``_planned_goal`` during the
         initial plan. Reusing their original delta from the current position would
         repeat the full relative move after every avoidance interruption.
+
+        Args:
+            current_position (OrientedPoint): Current measured robot pose.
+
+        Returns:
+            TrajectoryPlanCommand: Replanned command from the current position.
         """
         if (
             self.params.path_planner_params.path_finding_strategy
@@ -208,6 +214,10 @@ class NavigatorTask:
         controller, however, should chase a local target built from the real
         odometry so a lagging robot does not keep receiving targets that run away
         along the ideal trajectory.
+
+        Args:
+            planned_cmd (TrajectoryPlanCommand): Command from the trajectory planner.
+            current_position (OrientedPoint): Current measured robot pose.
 
         Returns:
             TrajectoryPlanCommand: Command rebased on the measured pose.

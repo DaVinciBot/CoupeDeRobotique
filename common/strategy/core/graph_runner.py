@@ -4,11 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
+from loggerplusplus import Logger
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from strategy.core.base_game_context import BaseGameContext
     from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
@@ -32,7 +30,7 @@ class GraphRunner:
             parallel (bool, optional): Execute all valid transitions in parallel when
                 ``True``. Defaults to ``False``.
         """
-        self._logger = logger or LogLogger(
+        self._logger = logger or Logger(
             identifier="GraphRunner",
             follow_logger_manager_rules=True,
         )

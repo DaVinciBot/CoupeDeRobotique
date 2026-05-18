@@ -5,13 +5,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
+from loggerplusplus import Logger
+
 from strategy.core.base_game_context import BaseGameContext
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from loggerplusplus import Logger
 
 
 class BaseTask[GameContextT: BaseGameContext](ABC):
@@ -34,7 +33,7 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         """
         self._points = points
         self._estimated_duration = estimated_duration
-        self._logger: Logger = logger or LogLogger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

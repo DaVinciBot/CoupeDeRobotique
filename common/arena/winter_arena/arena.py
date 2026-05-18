@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from math import pi
-from typing import TYPE_CHECKING, override
+from typing import override
+
+from loggerplusplus import Logger
 
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
@@ -15,10 +17,6 @@ from arena.base_arena.arena_zones import (
     YellowReservedZone,
 )
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
-from log_manager import LogLogger
-
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
 
 GO_TO_POSITIONS_INDEX = 2
 
@@ -52,26 +50,26 @@ class WinterArena(BaseArena):
             distance_to_drop_zone (float):
                 Distance to maintain from Deposit zones.
         """
-        jenga_zone_logger = LogLogger(
+        jenga_zone_logger = Logger(
             identifier="JengaZone",
             follow_logger_manager_rules=True,
         )
-        drop_zone_logger = LogLogger(
+        drop_zone_logger = Logger(
             identifier="DropZone",
             follow_logger_manager_rules=True,
         )
 
-        yellow_reserved_zone_logger = LogLogger(
+        yellow_reserved_zone_logger = Logger(
             identifier="YellowReservedZone",
             follow_logger_manager_rules=True,
         )
 
-        blue_reserved_zone_logger = LogLogger(
+        blue_reserved_zone_logger = Logger(
             identifier="BlueReservedZone",
             follow_logger_manager_rules=True,
         )
 
-        ninja_stage_zone_logger = LogLogger(
+        ninja_stage_zone_logger = Logger(
             identifier="NinjaStageZone",
             follow_logger_manager_rules=True,
         )

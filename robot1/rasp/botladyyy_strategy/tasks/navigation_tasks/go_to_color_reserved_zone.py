@@ -92,7 +92,7 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
 
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
-            ctx (GameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Raises:
             ValueError: If the provided color_reserved_zone_id is invalid.

@@ -6,7 +6,6 @@ from abc import ABC
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
-from log_manager import LogLogger
 from strategy.core.builders import SubGraphBuilder
 from strategy.core.sub_graphs import BaseSubGraph
 from strategy.core.transitions import DirectTransition
@@ -32,7 +31,7 @@ class BaseStrategy(ABC):
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner
-        self._logger = LogLogger(
+        self._logger = Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

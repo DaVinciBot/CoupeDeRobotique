@@ -5,14 +5,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
+from loggerplusplus import Logger
+
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params import (  # noqa: E501
     BaseAcsDetectionProfileParams,
 )
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
 
 
@@ -28,7 +27,7 @@ class BaseAcsDetectionProfile[PARAMSTYPE: BaseAcsDetectionProfileParams](ABC):
                 Logger instance for debugging. Defaults to None.
         """
         self.params: PARAMSTYPE = params
-        self._logger: Logger = logger or LogLogger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

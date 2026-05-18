@@ -20,7 +20,12 @@ from navigation.trajectory_planner.speed_profile.speed_profiler import SpeedProf
 
 
 def _bind_elapsed(planner: SequentialTrajectoryPlanner, elapsed: float) -> None:
-    """Force elapsed time used by get_plan to a deterministic value."""
+    """Force elapsed time used by get_plan to a deterministic value.
+
+    Args:
+        planner (SequentialTrajectoryPlanner): Planner to patch.
+        elapsed (float): Elapsed time to return.
+    """
     planner._get_trajectory_time_elapsed = types.MethodType(  # type: ignore[method-assign]
         lambda _self: elapsed,
         planner,

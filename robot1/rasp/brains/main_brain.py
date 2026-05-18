@@ -36,7 +36,6 @@ from botladyyy_strategy.tasks.navigation_tasks import (
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
-from log_manager import LogLogger
 from sensors import LidarError
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
@@ -46,7 +45,12 @@ ZERO_PID = {"kp": 0.0, "ki": 0.0, "kd": 0.0}
 
 
 def set_zero_pids(rolling_basis: RollingBasis | RollingBasisDummy) -> None:
-    """Disable all rolling basis PID controllers."""
+    """Disable all rolling basis PID controllers.
+
+    Args:
+        rolling_basis (RollingBasis | RollingBasisDummy):
+            Rolling basis controller to configure.
+    """
     rolling_basis.set_pids(
         linear_position_pid=ZERO_PID,
         angular_position_pid=ZERO_PID,
@@ -59,6 +63,12 @@ def get_relative_rotation_sign(team_color: TeamColor) -> float:
     """Return the team-dependent sign for relative rotations.
 
     Positive relative rotations are calibrated for the blue team.
+
+    Args:
+        team_color (TeamColor): Active team color.
+
+    Returns:
+        float: Rotation sign to apply to relative rotations.
     """
     if team_color == TeamColor.BLUE:
         return -1.0
@@ -93,7 +103,7 @@ class MainBrain(Brain):
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy | UltrasonicDistanceSensor):
                 Distance sensor instance for obstacle measurements.
-            arena (ShowArena): Arena instance for representing the game arena.
+            arena (WinterArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
@@ -171,7 +181,11 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
-        """Runs the main control loop for the robot."""
+        """Runs the main control loop for the robot.
+
+        Raises:
+            Exception: If initialization fails before the control loop starts.
+        """
         # --- Initialization --- #
         strategy: GoBackstageStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
@@ -180,7 +194,7 @@ class MainBrain(Brain):
             # --- 1) Initialize subsystems --- #
             if CONFIG.ROLLING_BASIS_DUMMY:
                 rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                    logger=LogLogger(
+                    logger=Logger(
                         identifier="RollingBasisDummy",
                         follow_logger_manager_rules=True,
                     ),
@@ -189,7 +203,7 @@ class MainBrain(Brain):
                 )
             else:
                 rolling_basis = RollingBasis(
-                    logger=LogLogger(
+                    logger=Logger(
                         identifier="RollingBasis",
                         follow_logger_manager_rules=True,
                     ),
@@ -202,14 +216,14 @@ class MainBrain(Brain):
             init_stage = "actuators setup"
             if CONFIG.ACTUATORS_DUMMY:
                 actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                    logger=LogLogger(
+                    logger=Logger(
                         identifier="Actuators",
                         follow_logger_manager_rules=True,
                     ),
                 )
             else:
                 actuators = ActuatorsShow(
-                    logger=LogLogger(
+                    logger=Logger(
                         identifier="Actuators",
                         follow_logger_manager_rules=True,
                     ),
@@ -298,7 +312,7 @@ class MainBrain(Brain):
                 zone: int | None = self.arena.get_current_zone_id()
                 if self.task_type == "navigation":
                     action_holder[0] = GraphRunner(
-                        logger=LogLogger(
+                        logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
@@ -310,7 +324,7 @@ class MainBrain(Brain):
                 elif self.task_type == "relative_forward":
                     distance = float(self.task_data.get("distance", 0.0))
                     action_holder[0] = GraphRunner(
-                        logger=LogLogger(
+                        logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
@@ -322,7 +336,7 @@ class MainBrain(Brain):
                 elif self.task_type == "relative_backward":
                     distance = float(self.task_data.get("distance", 0.0))
                     action_holder[0] = GraphRunner(
-                        logger=LogLogger(
+                        logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
@@ -334,7 +348,7 @@ class MainBrain(Brain):
                 elif self.task_type == "relative_turn":
                     angle = float(self.task_data.get("angle", 0.0))
                     action_holder[0] = GraphRunner(
-                        logger=LogLogger(
+                        logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),

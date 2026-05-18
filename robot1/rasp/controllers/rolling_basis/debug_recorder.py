@@ -223,9 +223,9 @@ class RollingBasisDebugRecorder:
 
         Args:
             position (OrientedPoint): Current estimated position from odometry.
-            measured_linear_speed (float, optional):
+            measured_linear_speed (float | None, optional):
                 Measured linear speed in cm/s. Defaults to None.
-            measured_angular_speed (float, optional):
+            measured_angular_speed (float | None, optional):
                 Measured angular speed in rad/s. Defaults to None.
         """
         if not self._enabled:

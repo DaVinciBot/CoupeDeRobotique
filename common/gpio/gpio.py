@@ -34,6 +34,9 @@ class PIN:
             mode (str): The pin mode (output/input/input_pullup/input_pulldown).
             reverse_state (bool, optional):
                 Whether to reverse the state of the pin. Defaults to ``False``.
+
+        Raises:
+            RuntimeError: If no Raspberry Pi GPIO backend is available.
         """
         mode = mode.lower()
         self.mode = mode

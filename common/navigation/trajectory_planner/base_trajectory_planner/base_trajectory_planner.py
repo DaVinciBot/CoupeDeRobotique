@@ -7,15 +7,14 @@ import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
+from loggerplusplus import Logger
+
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (  # noqa: E501
     BaseTrajectoryPlannerParams,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from loggerplusplus import Logger
 
     from geometry import OrientedPoint
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
@@ -45,7 +44,7 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to ``None``.
         """
-        self._logger: Logger = logger or LogLogger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

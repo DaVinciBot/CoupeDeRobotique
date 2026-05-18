@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
 from strategy.core.sub_graphs import BaseSubGraph
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ class SubGraphBuilder:
 
     def __init__(self) -> None:
         """Initialize empty builder and logger."""
-        self._logger = LogLogger(
+        self._logger = Logger(
             identifier="SubGraphBuilder",
             follow_logger_manager_rules=True,
         )

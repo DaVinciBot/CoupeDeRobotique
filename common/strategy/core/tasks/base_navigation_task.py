@@ -72,7 +72,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                 Logger instance for debugging. Defaults to None.
             points (int, optional):
                 Points awarded for completing this task. Defaults to 0.
-            estimated_duration (float, optional):
+            estimated_duration (float | Callable[[GameContextT], float], optional):
                 Estimated duration of the task in seconds. Defaults to 0.0.
             position_reached_tolerance_cm (float, optional):
                 Accepted position error before considering the goal reached.

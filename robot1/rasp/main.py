@@ -16,11 +16,10 @@ from arena.base_arena.arena_zones import AllyZone
 from arena.winter_arena import WinterArena
 from brains import MainBrain
 from geometry import OrientedPoint
-from log_manager import LogLogger
 from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
 
-_logger = LogLogger(
+_logger = Logger(
     identifier="Main",
     follow_logger_manager_rules=True,
 )
@@ -32,37 +31,37 @@ if __name__ == "__main__":
 
     # Loggers
     # System-Part loggers
-    logger_ws_server = LogLogger(
+    logger_ws_server = Logger(
         identifier="WS_Server",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_route_manager = LogLogger(
+    logger_ws_cmd_route_manager = Logger(
         identifier="WS_cmd_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_sender = LogLogger(
+    logger_ws_cmd_sender = Logger(
         identifier="WS_cmd_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_receiver = LogLogger(
+    logger_ws_cmd_receiver = Logger(
         identifier="WS_cmd_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_ws_ui_route_manager = LogLogger(
+    logger_ws_ui_route_manager = Logger(
         identifier="WS_UI_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_sender = LogLogger(
+    logger_ws_ui_sender = Logger(
         identifier="WS_UI_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_receiver = LogLogger(
+    logger_ws_ui_receiver = Logger(
         identifier="WS_UI_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_brain = LogLogger(
+    logger_brain = Logger(
         identifier="Brain",
         # Only Brain manages monitoring
         files_monitoring=False,
@@ -70,7 +69,7 @@ if __name__ == "__main__":
         print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )
-    logger_lidar = LogLogger(
+    logger_lidar = Logger(
         identifier="DistanceSensor",
         follow_logger_manager_rules=True,
     )
@@ -80,12 +79,12 @@ if __name__ == "__main__":
     # All rolling basis part is executed in another process so define inside this part
 
     # Environment loggers
-    logger_grid_manager = LogLogger(
+    logger_grid_manager = Logger(
         identifier="GridManager",
         print_log_level=LogLevels.INFO,
         follow_logger_manager_rules=True,
     )
-    logger_show_arena = LogLogger(
+    logger_show_arena = Logger(
         identifier="ShowArena",
         follow_logger_manager_rules=True,
     )

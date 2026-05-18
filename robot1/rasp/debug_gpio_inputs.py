@@ -66,20 +66,46 @@ BCM_TO_PHYSICAL = {
 
 
 class Reader(Protocol):
-    """Read digital values from GPIO pins."""
+    """Read digital values from GPIO pins.
+
+    Attributes:
+        name (str): Human-readable reader backend name.
+    """
 
     name: str
 
     def setup(self, pin_numbers: list[int], mode: str, samples: int) -> dict[int, bool]:
-        """Prepare pins when needed and return initial values."""
+        """Prepare pins when needed and return initial values.
+
+        Args:
+            pin_numbers (list[int]): BCM pin numbers to prepare.
+            mode (str): Input mode to configure.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            dict[int, bool]: Initial value keyed by BCM pin number.
+        """
 
     def read(self, pin_number: int, samples: int) -> bool:
-        """Read one pin value."""
+        """Read one pin value.
+
+        Args:
+            pin_number (int): BCM pin number to read.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            bool: Current digital value.
+        """
 
 
 @dataclass
 class PinProbe:
-    """Keep the last observed value for one pin."""
+    """Keep the last observed value for one pin.
+
+    Attributes:
+        pin_number (int): BCM pin number.
+        value (bool): Last observed digital value.
+    """
 
     pin_number: int
     value: bool
@@ -89,13 +115,28 @@ class CommandReader:
     """Read GPIO levels using a Raspberry Pi command-line tool."""
 
     def __init__(self, command: str, *, configure_pins: bool = False) -> None:
-        """Initialize a command-backed reader."""
+        """Initialize a command-backed reader.
+
+        Args:
+            command (str): Command-line tool name to call.
+            configure_pins (bool, optional):
+                Whether to configure pins before reading.
+        """
         self.name = command
         self._configure_pins = configure_pins
         self._pattern = PINCTRL_RE if command == "pinctrl" else RASPI_GPIO_RE
 
     def setup(self, pin_numbers: list[int], mode: str, samples: int) -> dict[int, bool]:
-        """Return initial pin values without reserving GPIO lines."""
+        """Return initial pin values without reserving GPIO lines.
+
+        Args:
+            pin_numbers (list[int]): BCM pin numbers to prepare.
+            mode (str): Input mode to configure when requested.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            dict[int, bool]: Initial value keyed by BCM pin number.
+        """
         if self._configure_pins:
             for pin_number in pin_numbers:
                 self._set_input_mode(pin_number, mode)
@@ -105,7 +146,15 @@ class CommandReader:
         return self._read_many(pin_numbers)
 
     def read(self, pin_number: int, samples: int) -> bool:
-        """Read one pin through the command-line tool."""
+        """Read one pin through the command-line tool.
+
+        Args:
+            pin_number (int): BCM pin number to read.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            bool: Current digital value.
+        """
         values = self._read_many([pin_number])
         return values[pin_number]
 
@@ -149,16 +198,29 @@ class CommandReader:
 
 
 class GpiozeroReader:
-    """Read GPIO levels through the project's gpiozero wrapper."""
+    """Read GPIO levels through the project's gpiozero wrapper.
 
-    name = "gpiozero"
+    Attributes:
+        name (str): Human-readable reader backend name.
+    """
+
+    name: str = "gpiozero"
 
     def __init__(self) -> None:
         """Initialize the reader."""
         self._pins: dict[int, object] = {}
 
     def setup(self, pin_numbers: list[int], mode: str, samples: int) -> dict[int, bool]:
-        """Configure input pins through gpiozero."""
+        """Configure input pins through gpiozero.
+
+        Args:
+            pin_numbers (list[int]): BCM pin numbers to prepare.
+            mode (str): Input mode to configure.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            dict[int, bool]: Initial value keyed by BCM pin number.
+        """
         from gpio import PIN
 
         values: dict[int, bool] = {}
@@ -170,13 +232,28 @@ class GpiozeroReader:
         return values
 
     def read(self, pin_number: int, samples: int) -> bool:
-        """Read one configured pin through gpiozero."""
+        """Read one configured pin through gpiozero.
+
+        Args:
+            pin_number (int): BCM pin number to read.
+            samples (int): Number of samples for majority reads.
+
+        Returns:
+            bool: Current digital value.
+        """
         pin = self._pins[pin_number]
         return bool(pin.safe_digital_read(samples))
 
 
 def parse_pin_list(value: str) -> list[int]:
-    """Parse comma-separated pins and ranges, for example ``2,3,10-15``."""
+    """Parse comma-separated pins and ranges.
+
+    Args:
+        value (str): Comma-separated pins and ranges, for example ``2,3,10-15``.
+
+    Returns:
+        list[int]: Parsed unique BCM pin numbers.
+    """
     pins: list[int] = []
     for part in value.split(","):
         item = part.strip()
@@ -194,7 +271,11 @@ def parse_pin_list(value: str) -> list[int]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Create the command-line parser."""
+    """Create the command-line parser.
+
+    Returns:
+        argparse.ArgumentParser: Configured argument parser.
+    """
     parser = argparse.ArgumentParser(
         description="Read Raspberry Pi GPIO inputs to identify the tirette pin.",
     )
@@ -250,7 +331,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def select_readers(backend: str, *, configure_pins: bool) -> list[Reader]:
-    """Select candidate GPIO readers."""
+    """Select candidate GPIO readers.
+
+    Args:
+        backend (str): Requested backend name.
+        configure_pins (bool): Whether command readers should configure pins.
+
+    Returns:
+        list[Reader]: Candidate readers in preferred order.
+
+    Raises:
+        RuntimeError: If no matching reader backend is available.
+    """
     readers: list[Reader] = []
     if backend in ("auto", "pinctrl") and shutil.which("pinctrl") is not None:
         readers.append(CommandReader("pinctrl", configure_pins=configure_pins))
@@ -272,7 +364,17 @@ def setup_pins(
     mode: str,
     samples: int,
 ) -> list[PinProbe]:
-    """Configure pins as needed and return readable probes."""
+    """Configure pins as needed and return readable probes.
+
+    Args:
+        reader (Reader): Reader backend to initialize.
+        pin_numbers (list[int]): BCM pin numbers to prepare.
+        mode (str): Input mode to configure.
+        samples (int): Number of samples for majority reads.
+
+    Returns:
+        list[PinProbe]: Readable pin probes with initial values.
+    """
     probes: list[PinProbe] = []
     try:
         values = reader.setup(pin_numbers, mode, samples)
@@ -287,12 +389,26 @@ def setup_pins(
 
 
 def format_value(value: bool) -> str:
-    """Return a compact digital-state label."""
+    """Return a compact digital-state label.
+
+    Args:
+        value (bool): Digital value to format.
+
+    Returns:
+        str: Compact label for the digital state.
+    """
     return "HIGH/1" if value else "LOW/0"
 
 
 def format_pin(pin_number: int) -> str:
-    """Return a label with BCM and physical header numbers."""
+    """Return a label with BCM and physical header numbers.
+
+    Args:
+        pin_number (int): BCM pin number to format.
+
+    Returns:
+        str: Label containing BCM and physical header numbers.
+    """
     physical = BCM_TO_PHYSICAL.get(pin_number)
     if physical is None:
         return f"GPIO {pin_number:>2}"
@@ -300,7 +416,11 @@ def format_pin(pin_number: int) -> str:
 
 
 def print_all(probes: list[PinProbe]) -> None:
-    """Print one compact row with every current pin value."""
+    """Print one compact row with every current pin value.
+
+    Args:
+        probes (list[PinProbe]): Pin probes to print.
+    """
     states = "  ".join(
         f"{probe.pin_number:>2}:{'1' if probe.value else '0'}" for probe in probes
     )
@@ -308,7 +428,11 @@ def print_all(probes: list[PinProbe]) -> None:
 
 
 def main() -> int:
-    """Run the GPIO diagnostics loop."""
+    """Run the GPIO diagnostics loop.
+
+    Returns:
+        int: Process exit code.
+    """
     args = build_parser().parse_args()
     if args.interval <= 0:
         print("--interval must be greater than 0.")

@@ -11,9 +11,8 @@ try:
 except ModuleNotFoundError:
     cv2: Any = None
 
-from log_manager import LogLogger
 
-_logger = LogLogger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
+_logger = Logger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
 
 
 class MJPEGHandler(BaseHTTPRequestHandler):

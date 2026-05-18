@@ -12,7 +12,6 @@ from botladyyy_strategy.sub_graphs import (
 from botladyyy_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
@@ -61,7 +60,7 @@ class DebugStrategy(BaseStrategy):
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
-            logger=LogLogger(
+            logger=Logger(
                 identifier="BasicStrategyRunner",
                 follow_logger_manager_rules=True,
             ),

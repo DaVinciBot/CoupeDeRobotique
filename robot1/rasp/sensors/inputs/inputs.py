@@ -3,13 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
 
-from log_manager import LogLogger
-
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
+from loggerplusplus import Logger
 
 CONSECUTIVE_TRIGGER_THRESHOLD = 5
 CONSECUTIVE_PLUG_THRESHOLD = 5
@@ -36,7 +31,7 @@ class Inputs:
             use_dummy_gpio (bool, optional):
                 Use simulated pins instead of Raspberry Pi GPIO. Defaults to False.
         """
-        self._logger = logger or LogLogger(
+        self._logger = logger or Logger(
             identifier="Inputs",
             follow_logger_manager_rules=True,
         )

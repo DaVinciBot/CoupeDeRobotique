@@ -59,8 +59,9 @@ def test_theta_normalization_edge_cases(angle: float, expected_in_range: bool) -
     """Test edge cases for theta normalization.
 
     Args:
-        angle: The angle to test.
-        expected_in_range: Whether the angle should be in [-π, π] after normalization.
+        angle (float): The angle to test.
+        expected_in_range (bool):
+            Whether the angle should be in [-π, π] after normalization.
     """
     p = OrientedPoint((0, 0), 0)
     p.theta = angle

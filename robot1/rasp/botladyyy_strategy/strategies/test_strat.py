@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from botladyyy_strategy.strategies.base_strategy import BaseStrategy
 from botladyyy_strategy.tasks.navigation_tasks.maneuver import RelativeRotation
-from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
@@ -38,7 +37,7 @@ class TestStrategy(BaseStrategy):
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
-            logger=LogLogger(
+            logger=Logger(
                 identifier="TestStrategyRunner",
                 follow_logger_manager_rules=True,
             ),

@@ -5,14 +5,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from events import Events
+from loggerplusplus import Logger
 
-from log_manager import LogLogger
 from navigation.navigator.signals.signals_enum import NavigatorSignalsEnum
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from loggerplusplus import Logger
 
 
 class NavigatorSignalsDispatcher:  # UNUSED
@@ -27,7 +25,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
         """
-        self._logger = logger or LogLogger(
+        self._logger = logger or Logger(
             identifier="NavigatorSignalsDispatcher",
             follow_logger_manager_rules=True,
         )

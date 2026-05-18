@@ -57,7 +57,11 @@ def print_usb_devices() -> None:
 
 
 def print_serial_ports() -> list[serial.tools.list_ports.ListPortInfo]:
-    """List serial ports visible through pyserial."""
+    """List serial ports visible through pyserial.
+
+    Returns:
+        list[serial.tools.list_ports.ListPortInfo]: Visible serial ports.
+    """
     print("\n== Serial ports visible through pyserial ==")
     ports = list(serial.tools.list_ports.comports())
     if not ports:
@@ -99,7 +103,15 @@ def test_pysicktim() -> None:
 
 
 def read_available(ser: serial.Serial, timeout_s: float = 0.4) -> bytes:
-    """Read all bytes available for a short time window."""
+    """Read all bytes available for a short time window.
+
+    Args:
+        ser (serial.Serial): Serial connection to read.
+        timeout_s (float): Inactivity timeout in seconds.
+
+    Returns:
+        bytes: Bytes read from the serial connection.
+    """
     end = time.monotonic() + timeout_s
     chunks: list[bytes] = []
     while time.monotonic() < end:
@@ -112,7 +124,14 @@ def read_available(ser: serial.Serial, timeout_s: float = 0.4) -> bytes:
 
 
 def cola_frames(command: str) -> Iterable[bytes]:
-    """Return common CoLa serial frame variants for one command."""
+    """Yield common CoLa serial frame variants for one command.
+
+    Args:
+        command (str): CoLa ASCII command body.
+
+    Yields:
+        bytes: One serial frame variant.
+    """
     raw = command.encode("ascii")
     yield b"\x02" + raw + b"\x03"
     yield b"\x02" + raw + b"\x03\x00"
@@ -122,14 +141,25 @@ def cola_frames(command: str) -> Iterable[bytes]:
 
 
 def format_response(response: bytes) -> str:
-    """Render bytes as text when possible, with a hex fallback."""
+    """Render bytes as text when possible, with a hex fallback.
+
+    Args:
+        response (bytes): Raw response bytes.
+
+    Returns:
+        str: Text and hex preview of the response.
+    """
     text = response.decode("ascii", errors="replace")
     hex_preview = response[:80].hex(" ")
     return f"text={text[:300]!r} hex={hex_preview}"
 
 
 def test_serial_cola(port: str) -> None:
-    """Try CoLa ASCII commands on a serial port."""
+    """Try CoLa ASCII commands on a serial port.
+
+    Args:
+        port (str): Serial port device path.
+    """
     print(f"\n== Serial CoLa probe on {port} ==")
     for baudrate in SERIAL_BAUDRATES:
         for format_name, bytesize, parity, stopbits in SERIAL_FORMATS:
@@ -169,7 +199,11 @@ def test_serial_cola(port: str) -> None:
 
 
 def sniff_serial(port: str) -> None:
-    """Read serial data without sending commands."""
+    """Read serial data without sending commands.
+
+    Args:
+        port (str): Serial port device path.
+    """
     print(f"\n== Passive serial sniff on {port} ==")
     for baudrate in SERIAL_BAUDRATES:
         try:

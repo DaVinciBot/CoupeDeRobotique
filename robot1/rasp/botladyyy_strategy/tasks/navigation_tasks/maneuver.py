@@ -41,6 +41,12 @@ class RelativeBackward(NavigationTask):
 
         Args:
             distance (float): The distance to move backward in centimeters.
+            position_reached_tolerance_cm (float, optional):
+                Accepted position error before considering the goal reached.
+            angle_reached_tolerance_rad (float, optional):
+                Accepted orientation error before considering the goal reached.
+            finish_after_expected_end_delay_s (float | None, optional):
+                Extra time after the planned duration before finishing.
         """
         super().__init__(
             goal=None,
@@ -83,6 +89,12 @@ class RelativeForward(NavigationTask):
 
         Args:
             distance (float): The distance to move forward in centimeters.
+            position_reached_tolerance_cm (float, optional):
+                Accepted position error before considering the goal reached.
+            angle_reached_tolerance_rad (float, optional):
+                Accepted orientation error before considering the goal reached.
+            finish_after_expected_end_delay_s (float | None, optional):
+                Extra time after the planned duration before finishing.
         """
         super().__init__(
             goal=None,
@@ -115,6 +127,12 @@ class RelativeRotation(NavigationTask):
 
         Args:
             angle (float): The angle to rotate in radians.
+            position_reached_tolerance_cm (float, optional):
+                Accepted position error before considering the goal reached.
+            angle_reached_tolerance_rad (float, optional):
+                Accepted orientation error before considering the goal reached.
+            finish_after_expected_end_delay_s (float | None, optional):
+                Extra time after the planned duration before finishing.
         """
         super().__init__(
             goal=None,

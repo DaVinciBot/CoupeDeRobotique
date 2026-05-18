@@ -1,8 +1,6 @@
 """Provide a unified ``PIN`` interface for real or dummy GPIO access."""
 
-from log_manager import LogLogger
-
-_logger = LogLogger(
+_logger = Logger(
     identifier=__name__,
     follow_logger_manager_rules=True,
 )

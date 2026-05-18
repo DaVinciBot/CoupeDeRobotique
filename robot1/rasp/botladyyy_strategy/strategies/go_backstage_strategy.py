@@ -13,7 +13,6 @@ from botladyyy_strategy.tasks.navigation_tasks.maneuver import (
     RelativeRotation,
 )
 from botladyyy_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
-from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.tasks import BaseTask
@@ -38,6 +37,11 @@ class _MarkStrategyStart(BaseTask["WinterGameContext"]):
     """Record the actual strategy start time."""
 
     def __init__(self, timer: _StrategyTimer) -> None:
+        """Initialize the start marker task.
+
+        Args:
+            timer (_StrategyTimer): Shared strategy timer to initialize.
+        """
         super().__init__(estimated_duration=0.0, points=0)
         self._timer = timer
 
@@ -51,6 +55,12 @@ class _WaitUntilStrategyElapsed(BaseTask["WinterGameContext"]):
     """Wait until the strategy has been running for the requested duration."""
 
     def __init__(self, timer: _StrategyTimer, duration_s: float) -> None:
+        """Initialize the wait task.
+
+        Args:
+            timer (_StrategyTimer): Shared strategy timer to read.
+            duration_s (float): Required elapsed strategy duration in seconds.
+        """
         super().__init__(estimated_duration=duration_s, points=0)
         self._timer = timer
         self._duration_s = duration_s
@@ -176,7 +186,7 @@ class GoBackstageStrategy(BaseStrategy):
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
-            logger=LogLogger(
+            logger=Logger(
                 identifier="GoBackstageStrategy",
                 follow_logger_manager_rules=True,
             ),

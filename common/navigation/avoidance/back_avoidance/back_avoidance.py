@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+from loggerplusplus import Logger
+
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
@@ -28,8 +30,6 @@ from navigation.trajectory_planner.sequential_trajectory_planner import (
 )
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501

@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
-from loggerplusplus import time_tracker
+from loggerplusplus import Logger, time_tracker
 from pathfinding.core.grid import GridNode
 
 from geometry import OrientedPoint
@@ -15,9 +14,6 @@ from navigation.path_planner.astar_path_planner.astar_path_planner_params import
 )
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
 from navigation.path_planner.structs import Direction
-
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
 
 _TWO_POINTS = 2
 _THREE_POINTS = 3

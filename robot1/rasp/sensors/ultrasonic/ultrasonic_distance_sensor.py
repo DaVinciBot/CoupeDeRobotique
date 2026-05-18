@@ -119,6 +119,9 @@ class UltrasonicDistanceSensor:
 
         Empty scans keep the previous enemy position in the arena, so the clear
         state publishes far points instead of nothing.
+
+        Returns:
+            NDArray[np.float32]: Polar points representing the fake scan.
         """
         distance = self._read_fake_distance()
         if distance is None or distance > self._stop_distance:
