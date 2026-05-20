@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from botladyyy_strategy.tasks.actuator_task import (
     Build,
     DeplacementObject,
@@ -18,10 +20,14 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+if TYPE_CHECKING:
+    from botladyyy_strategy.winter_game_context import WinterGameContext
+
 
 def get_push_one_floor_to_wall_subgraph(
     zone_id: int,
     push_distance: int,
+    ctx: WinterGameContext,
     new_x: float | None = None,
     new_y: float | None = None,
     new_theta: float | None = None,
@@ -39,6 +45,7 @@ def get_push_one_floor_to_wall_subgraph(
     Args:
         zone_id (int): The ID of the target zone.
         push_distance (int): The distance to push forward in millimeters.
+        ctx (WinterGameContext): Current strategy context.
         new_x (float | None, optional):
             New X-coordinate for odometry reset. Defaults to None.
         new_y (float | None, optional):
@@ -63,7 +70,7 @@ def get_push_one_floor_to_wall_subgraph(
     node_navigate = f"[Push][Zone{zone_id}] NavigateToZone"
     builder.add_node(
         node_navigate,
-        BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(zone_id)),
+        BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(zone_id, ctx)),
     )
 
     # 3) Prepare actuator for pushing

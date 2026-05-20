@@ -90,7 +90,7 @@ class UltrasonicDistanceSensor:
             float | None:
                 A very close distance when GPIO27 is low, otherwise ``None``.
         """
-        if int(self._detector.value) == 0:
+        if not int(self._detector.value):
             self._low_reads_count = 0
             self._last_distance = None
             return None

@@ -16,7 +16,7 @@ Public API: `arena`, `geometry`, `gpio`, `led_strip`, `log_manager`, `navigation
 `strategy`, `teensy`, `usb_com`, `utils`, `video`.
 """
 
-from . import (
+from . import (  # pylint: disable=import-self
     arena,
     geometry,
     gpio,

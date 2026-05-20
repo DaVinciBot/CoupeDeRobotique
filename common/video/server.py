@@ -6,10 +6,12 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Any
 
+from loggerplusplus import Logger
+
 try:
     import cv2
 except ModuleNotFoundError:
-    cv2: Any = None
+    cv2: Any = None  # pylint: disable=invalid-name
 
 
 _logger = Logger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
@@ -42,7 +44,11 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         )
 
     def do_GET(self) -> None:  # pylint: disable=invalid-name
-        """Serve the MJPEG stream or index page depending on the path."""
+        """Serve the MJPEG stream or index page depending on the path.
+
+        Raises:
+            RuntimeError: If OpenCV is unavailable for an MJPEG request.
+        """
         if self.path.endswith(".mjpg"):
             if cv2 is None:
                 raise RuntimeError(

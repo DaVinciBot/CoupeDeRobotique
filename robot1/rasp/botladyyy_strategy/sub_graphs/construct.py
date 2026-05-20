@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 from botladyyy_strategy.tasks.actuator_task import Build, Deposit, PickUp
 from botladyyy_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
@@ -13,8 +14,15 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+if TYPE_CHECKING:
+    from botladyyy_strategy.winter_game_context import WinterGameContext
 
-def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
+
+def get_construct_subgraph(
+    zone_id: int,
+    ctx: WinterGameContext,
+    back_offset: int = 0,
+) -> BaseSubGraph:
     """Create a construction subgraph for a specific zone.
 
     The subgraph includes navigation to the zone, positioning forward,
@@ -23,6 +31,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
     Args:
         zone_id (int): Identifier for the target construction zone.
+        ctx (WinterGameContext): Current strategy context.
         back_offset (int, optional):
             Distance already covered behind the zone, used to adjust forward motion.
             Defaults to 0.
@@ -39,7 +48,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToColorReservedZoneToConstruct(zone_id),
+            tasks=GoToColorReservedZoneToConstruct(zone_id, ctx),
         ),
     )
 
@@ -91,6 +100,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
 def get_construct_one_floor_subgraph(
     zone_id: int,
+    ctx: WinterGameContext,
     back_offset: int = 0,
 ) -> BaseSubGraph:
     """Create a one-floor construction subgraph for a given zone.
@@ -101,6 +111,7 @@ def get_construct_one_floor_subgraph(
 
     Args:
         zone_id (int): Identifier for the target construction zone.
+        ctx (WinterGameContext): Current strategy context.
         back_offset (int, optional):
             Distance already covered behind the zone, used to adjust forward motion.
             Defaults to 0.
@@ -117,7 +128,7 @@ def get_construct_one_floor_subgraph(
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToColorReservedZoneToConstruct(zone_id),
+            tasks=GoToColorReservedZoneToConstruct(zone_id, ctx),
         ),
     )
     time.sleep(10)

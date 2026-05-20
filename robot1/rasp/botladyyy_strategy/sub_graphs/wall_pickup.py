@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from botladyyy_strategy.tasks.actuator_task import (
     PickUp,
     PrepareToPickUp,
@@ -16,12 +18,19 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+if TYPE_CHECKING:
+    from botladyyy_strategy.winter_game_context import WinterGameContext
 
-def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
+
+def get_wall_pickup_subgraph(
+    pickup_zone_id: int,
+    ctx: WinterGameContext,
+) -> BaseSubGraph:
     """Build a pickup subgraph for a designated zone.
 
     Args:
         pickup_zone_id (int): The ID of the target pickup zone.
+        ctx (WinterGameContext): Current strategy context.
 
     Returns:
         BaseSubGraph:
@@ -40,7 +49,10 @@ def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     node_navigate = f"[Pickup] Navigate to zone {pickup_zone_id}"
     subgraph.add_node(
         node_navigate,
-        BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(pickup_zone_id)),
+        BaseTaskNode(
+            name=node_navigate,
+            tasks=GoToStuffZoneToPickUp(pickup_zone_id, ctx),
+        ),
     )
 
     # Node: Prepare to pick up the item

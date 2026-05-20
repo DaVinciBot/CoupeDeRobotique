@@ -5,6 +5,8 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
+from loggerplusplus import Logger
+
 from a_config_loader import CONFIG
 from strategy.core.builders import SubGraphBuilder
 from strategy.core.sub_graphs import BaseSubGraph

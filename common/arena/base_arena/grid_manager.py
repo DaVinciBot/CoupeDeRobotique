@@ -11,7 +11,6 @@ from loggerplusplus import LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
 from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
-from shapely.strtree import STRtree
 
 from geometry import OrientedPoint, Polygon, box
 
@@ -132,72 +131,6 @@ class GridManager:
                         >= self.forbidden_cover_threshold
                     ):
                         grid.nodes[row][actual_col].walkable = walkable
-
-        return grid
-
-    @time_tracker(lambda self: self._logger)
-    def __optimized_mark_zone(  # QUESTION: Useless ?
-        self,
-        grid: Grid,
-        polygon_to_mark: Polygon,
-        *,
-        walkable: bool,
-    ) -> Grid:
-        """Marks cells in the grid as forbidden based on intersection with a polygon.
-
-        Args:
-            grid (Grid): The grid to modify.
-            polygon_to_mark (Polygon): The polygon defining forbidden zones.
-            walkable (bool): Whether the cells should be marked as walkable.
-
-        Returns:
-            Grid: Updated grid with forbidden zones marked.
-        """
-        # Precompute polygon bounds and indices
-        minx, miny, maxx, maxy = polygon_to_mark.bounds
-
-        min_col = max(
-            0,
-            int((self.grid_width * self.chunk_size - maxx) // self.chunk_size),
-        )
-        max_col = min(
-            self.grid_width,
-            int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1,
-        )
-        min_row = max(0, int(miny // self.chunk_size))
-        max_row = min(self.grid_height, int(maxy // self.chunk_size) + 1)
-
-        # Build STRtree with geometries
-        if walkable and self.static_forbidden_zones:
-            static_zone_tree = STRtree(self.static_forbidden_zones)
-
-        # Iterate over relevant grid cells
-        for row in range(min_row, max_row):
-            for col in range(min_col, max_col):
-                actual_col = col
-                cell: Polygon = box(
-                    actual_col * self.chunk_size,
-                    row * self.chunk_size,
-                    (actual_col + 1) * self.chunk_size,
-                    (row + 1) * self.chunk_size,
-                )
-
-                # Check if the polygon intersects the grid cell
-                if polygon_to_mark.intersects(cell):
-                    # Check static forbidden zones if walkable
-                    if walkable and self.static_forbidden_zones:
-                        overlapping_zones: np.ndarray[Any, np.dtype[np.intp]] = (
-                            static_zone_tree.query(cell)
-                        )
-                        # Cast the ndarray to a list of Polygons
-                        overlapping_polygons = [
-                            self.static_forbidden_zones[i] for i in overlapping_zones
-                        ]
-                        if any(zone.intersects(cell) for zone in overlapping_polygons):
-                            continue
-
-                    # Update cell walkable status
-                    grid.nodes[row][actual_col].walkable = walkable
 
         return grid
 

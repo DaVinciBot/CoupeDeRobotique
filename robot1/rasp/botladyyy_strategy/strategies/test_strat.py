@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from loggerplusplus import Logger
+
 from botladyyy_strategy.strategies.base_strategy import BaseStrategy
 from botladyyy_strategy.tasks.navigation_tasks.maneuver import RelativeRotation
 from strategy.core import GraphRunner

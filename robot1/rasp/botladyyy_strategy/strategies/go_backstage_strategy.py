@@ -6,6 +6,8 @@ import math
 import time
 from typing import TYPE_CHECKING
 
+from loggerplusplus import Logger
+
 from botladyyy_strategy.strategies.base_strategy import BaseStrategy
 from botladyyy_strategy.tasks.navigation_tasks.maneuver import (
     RelativeBackward,
@@ -46,6 +48,7 @@ class _MarkStrategyStart(BaseTask["WinterGameContext"]):
         self._timer = timer
 
     def handle(self, _ctx: WinterGameContext) -> bool:
+        """Record the first monotonic timestamp and finish immediately."""
         if self._timer.start_time_s is None:
             self._timer.start_time_s = time.monotonic()
         return True
@@ -66,6 +69,7 @@ class _WaitUntilStrategyElapsed(BaseTask["WinterGameContext"]):
         self._duration_s = duration_s
 
     def handle(self, _ctx: WinterGameContext) -> bool:
+        """Return whether the configured strategy duration has elapsed."""
         if self._timer.start_time_s is None:
             self._timer.start_time_s = time.monotonic()
 

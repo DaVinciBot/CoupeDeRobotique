@@ -7,6 +7,8 @@ import time
 import traceback
 from typing import TYPE_CHECKING, Any
 
+from loggerplusplus import Logger
+
 from strategy.core.task_nodes.scoring_functions import (
     BaseScoringFunction,
     DefaultScoringFunction,

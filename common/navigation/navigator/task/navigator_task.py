@@ -107,6 +107,7 @@ class NavigatorTask:
         self.state = NavigatorTaskState.IN_PROGRESS
 
     def _has_timed_out(self) -> bool:
+        """Return whether the task exceeded its timeout."""
         return (
             False
             if self.params.timeout is None or self._start_time is None
@@ -125,6 +126,15 @@ class NavigatorTask:
         path: list[OrientedPoint],
         current_position: OrientedPoint,
     ) -> TrajectoryPlanCommand:
+        """Start a replanned trajectory from the provided current position.
+
+        Args:
+            path (list[OrientedPoint]): New path to follow.
+            current_position (OrientedPoint): Current measured robot pose.
+
+        Returns:
+            TrajectoryPlanCommand: Initial command for the replanned trajectory.
+        """
         self._planned_goal = path[-1] if path else current_position
         self.trajectory_planner.plan_trajectory(path)
         self.trajectory_planner.start_planning()
@@ -305,11 +315,7 @@ class NavigatorTask:
             return self._abort(ally_zone.point)
 
         if self.state == NavigatorTaskState.AVOIDING:
-            return self.avoidance.handle(
-                current_navigator_task=self,
-                ally_zone=ally_zone,
-                enemy_zone=enemy_zone,
-            )
+            return self.avoidance.handle(self, ally_zone, enemy_zone)
 
         planned_cmd = self.trajectory_planner.get_plan()
         cmd = self._command_from_current_position(planned_cmd, ally_zone.point)
@@ -342,11 +348,7 @@ class NavigatorTask:
 
         self.current_trajectory_command = cmd
 
-        avoidance_cmd = self.avoidance.handle(
-            current_navigator_task=self,
-            ally_zone=ally_zone,
-            enemy_zone=enemy_zone,
-        )
+        avoidance_cmd = self.avoidance.handle(self, ally_zone, enemy_zone)
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd
 

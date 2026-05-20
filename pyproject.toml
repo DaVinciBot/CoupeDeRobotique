@@ -143,6 +143,7 @@ disable = [
 enable = "all"
 exit-zero = true
 ignore = [".venv", "docs"]
+init-hook = 'import sys; sys.path[:0] = ["common", "robot1/rasp"]'
 msg-template = "{line}:{column}: {msg_id}: {msg} ({symbol})"
 output-format = "text"
 

@@ -7,7 +7,7 @@ import subprocess
 import sys
 import time
 
-from loggerplusplus import LogLevels
+from loggerplusplus import Logger, LogLevels
 from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 

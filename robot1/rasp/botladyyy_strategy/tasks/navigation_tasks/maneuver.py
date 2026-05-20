@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
 from botladyyy_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from geometry import OrientedPoint, distance
+from geometry import OrientedPoint, distance as geometry_distance
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
@@ -198,7 +198,7 @@ class GoCentroidOfZone(NavigationTask):
         centroid: OrientedPoint = OrientedPoint.from_point(
             ctx.arena.zones[self.zone_id].polygon.centroid,
         )
-        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        dist: float = float(geometry_distance(centroid, ctx.arena.ally_zone.point))
         return (
             self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=dist,

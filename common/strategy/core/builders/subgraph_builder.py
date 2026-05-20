@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from loggerplusplus import Logger
+
 from strategy.core.sub_graphs import BaseSubGraph
 
 if TYPE_CHECKING:

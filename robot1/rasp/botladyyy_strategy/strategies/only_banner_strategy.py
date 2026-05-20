@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from loggerplusplus import Logger
+
 from botladyyy_strategy.strategies.base_strategy import BaseStrategy
 from botladyyy_strategy.sub_graphs import get_banner_deployment_subgraph
 from botladyyy_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
