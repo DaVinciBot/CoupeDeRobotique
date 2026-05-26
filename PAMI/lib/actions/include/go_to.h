@@ -1,0 +1,28 @@
+#ifndef ACTIONS_GO_TO_H
+#define ACTIONS_GO_TO_H
+
+#include "action.h"
+#include "rolling_basis.h"
+
+extern volatile bool acsBlocked;
+
+class GoTo : public Action {
+   public:
+    GoTo(RollingBasis* rb, const Point& target);
+    ~GoTo() = default;
+    void start() override;
+    void update() override;
+    void stop() override;
+    bool isFinished() const override;
+    const char* name() const override;
+
+   private:
+    RollingBasis* _rb;
+    Point _target;
+    bool _started = false;
+    bool _finished = false;
+
+    static bool shouldPause();
+};
+
+#endif

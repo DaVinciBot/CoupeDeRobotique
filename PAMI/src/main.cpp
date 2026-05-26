@@ -1,30 +1,71 @@
+#include "blocking_forward.h"
+#include "blocking_turn.h"
+#include "actionneur_sweep.h"
+#include "wait.h"
 #include "config.h"
+#include "go_to.h"
+#include "lidar_pami.h"
+#include "strategy.h"
 
-Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
-                             LEFT_DIR_PIN,        // Broche 18
-                             LEFT_EN_PIN,         // Broche enable
-                             LEFT_STEPS_PER_REV,  // Steps par tour
+#if ENABLE_OTA
+#include "OTA.h"
+AsyncWebServer server(80);
+CustomOTA ota(OTA_WIFI_SSID,
+              OTA_WIFI_PASSWORD,
+              OTA_HOSTNAME,
+              OTA_FALLBACK_AP_SSID,
+              OTA_FALLBACK_AP_PASSWORD,
+              &server);
+#endif
+
+#if ENABLE_LORA
+HardwareSerial LoRaSerial(2);
+char loraRxBuffer[256];
+int loraRxPos = 0;
+int myPamiId = -1;
+#endif
+
+volatile bool acsBlocked = false;
+
+#if ENABLE_LIDAR
+HardwareSerial LidarSerial(1);
+lidar_pami* lidar =
+    new lidar_pami(LidarSerial, LIDAR_RX_PIN, LIDAR_TX_PIN, true);
+
+void lidarTask(void* param) {
+    lidar_pami* lid = (lidar_pami*)param;
+    for (;;) {
+        lid->update();
+        acsBlocked = lid->obstacleDirectlyAhead(ACS_TRESHOLD);
+        vTaskDelay(pdMS_TO_TICKS(5));
+    }
+}
+#endif
+
+Motor* leftMotor = new Motor(LEFT_STEP_PIN,
+                             LEFT_DIR_PIN,
+                             LEFT_EN_PIN,
+                             LEFT_STEPS_PER_REV,
                              PULSE_US,
-                             true);
+                             false);
 
-Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
-                              RIGHT_DIR_PIN,        // Broche 16
-                              RIGHT_EN_PIN,         // Broche enable
-                              RIGHT_STEPS_PER_REV,  // Steps par tour
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,
+                              RIGHT_DIR_PIN,
+                              RIGHT_EN_PIN,
+                              RIGHT_STEPS_PER_REV,
                               PULSE_US,
-                              false);
+                              true);
 
-RollingBasis* rollingBasis = new RollingBasis(leftMotor,
-                                              rightMotor,
+RollingBasis* rollingBasis = new RollingBasis(rightMotor,
+                                              leftMotor,
                                               WHEEL_DIAMETER_MM,
                                               WHEEL_BASE_MM,
-                                              Point{0, 0, 0});
+                                              Point{0.0f, 0.0f, 0.0f});
 
-Navigation* navigation = new Navigation(
-    rollingBasis,
-    15000);  // Navigation object with 100ms interval and 15s timeout
-
-lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+/*
+Navigation* navigation = new Navigation(rollingBasis, 15000);
+//lidar_pami* lidar = new lidar_pami(Serial0);
+Strategy* strategy = new Strategy(rollingBasis);
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -33,152 +74,271 @@ CustomOTA ota("DVB", "davincibot", &server);
 #endif
 #if ENABLE_LORA
 #include "com_pami.h"
-Com* com = new Com();  // LoRa object
+Com* com = new Com();
 bool isInit = false;
 #endif
 
 hw_timer_t* MovementTimer = NULL;
 hw_timer_t* lidarTimer = NULL;
 
-TaskHandle_t MovementTask = NULL;  // Task handle for movement updates
-TaskHandle_t LidarTask = NULL;     // Task handle for movement updates
+TaskHandle_t MovementTask = NULL;
+TaskHandle_t LidarTask = NULL;
 
 int d_zero, d_on = 0;
 bool tirette, t_one, t_two = true;
 
-// Array to store points to navigate to
-Point strat[] = {{0, 100, 0}, {100, 100, 0}, {100, 0, 0}, {0, 0, 0}};
-int currentIndex = 0;  // Current index in the strats array
+std::vector<Point> strat = {
+    {100, 100, 0}
+};
+
+int currentIndex = 0;
 bool ACS = false;
 bool oldACS = false;
 
 bool canStartTimer = true;
 long startTimer = 276447230;
-bool canStart = false;  // Flag to indicate if navigation can start
 
 long dt = 0;
 long lastTimerrrr = 0;
 
 void navigationUpdate() {
-    navigation->update();  // Update rolling basis
+    navigation->update();
     if (ACS) {
-        if (oldACS)
-            return;
-        Serial.println("ACS activated, stopping rolling basis.");
-        oldACS = ACS;    // Update oldACS to current ACS state
-        currentIndex--;  // Decrement index if ACS is true
-        if (currentIndex < 0) {
-            currentIndex = 0;  // Prevent index from going negative
-        }
-        navigation->stop();  // Stop rolling basis if ACS is true
+        if (oldACS) return;
+        oldACS = ACS;
+        navigation->stop();
+        Serial.println("ACS activated - Navigation stopped!");
     } else {
-        oldACS = ACS;  // Update oldACS to current ACS state
-        if (dt < 20000) {
-            leftMotor->setTargetSpeed(4000.0f * 3);
-            rightMotor->setTargetSpeed(4000.0f);
-            dt += millis() - lastTimerrrr;
-            lastTimerrrr = millis();
-        } else {
-            Serial.println("All points navigated, stopping navigation.");
-            navigation->stop();  // Stop navigation if all points are navigated
-                                 // start SERVO
+        oldACS = ACS;
+    }
+}
+*/
+
+Strategy* strategy = new Strategy(rollingBasis);
+
+bool strategyRunning = false;
+bool strategyDoneLogged = false;
+unsigned long lastStrategyUpdateMs = 0;
+bool canStart = false;
+
+#if ENABLE_LORA
+void purgeLoRa() {
+    LoRaSerial.print("\n");
+    LoRaSerial.flush();
+    delay(100);
+    while (LoRaSerial.available()) {
+        LoRaSerial.read();
+    }
+    loraRxPos = 0;
+}
+
+void sendIdRequest() {
+    Serial.println(">> LoRa: envoi demande d'ID (cmd 1)");
+    LoRaSerial.print("1\n");
+}
+
+void handleIdAttribution(char** tokens, int nbTokens) {
+    if (nbTokens < 2) return;
+    if (myPamiId != -1) {
+        Serial.printf("LoRa: ID deja attribue (%d), ignore.\n", myPamiId);
+        return;
+    }
+    myPamiId = atoi(tokens[1]);
+    Serial.printf(">> LoRa: ID attribue = %d\n", myPamiId);
+}
+
+void handleDepotAssignment(char** tokens, int nbTokens) {
+    if (myPamiId == -1) {
+        Serial.println("LoRa: cmd 3 recue mais pas d'ID -> ignoree");
+        return;
+    }
+
+    for (int i = 1; i + 2 < nbTokens; i += 3) {
+        int id = atoi(tokens[i]);
+        if (id == myPamiId) {
+            float x = atof(tokens[i + 1]);
+            float y = atof(tokens[i + 2]);
+
+            Serial.printf(">> LoRa: depot recu -> x=%.1f mm, y=%.1f mm\n", x,
+                          y);
+
+            strategy->clearActions();
+            strategy->addAction(
+                new GoTo(rollingBasis, Point{x, y, 0.0f}));
+            strategy->start();
+            strategyRunning = true;
+            strategyDoneLogged = false;
+
+            Serial.println(">> LoRa: nouvelle strategy GoTo lancee");
+            return;
         }
+    }
+
+    Serial.println("LoRa: aucun depot pour mon ID dans cmd 3");
+}
+
+void parseLoRaMessage(char* msg) {
+    Serial.printf("[LoRa RX] %s\n", msg);
+
+    const int MAX_TOKENS = 64;
+    char* tokens[MAX_TOKENS];
+    int nbTokens = 0;
+
+    char* p = strtok(msg, "|");
+    while (p != NULL && nbTokens < MAX_TOKENS) {
+        tokens[nbTokens++] = p;
+        p = strtok(NULL, "|");
+    }
+    if (nbTokens == 0) return;
+
+    int cmd = atoi(tokens[0]);
+    switch (cmd) {
+        case 2: handleIdAttribution(tokens, nbTokens); break;
+        case 3: handleDepotAssignment(tokens, nbTokens); break;
+        default: break;
     }
 }
 
-void lidarUpdate() {
-    if (lidar->obstacleAhead(ACS_TRESHOLD))  // Check if an obstacle is ahead
-    {
-        ACS = true;  // Activate ACS if an obstacle is detected
-    } else {
-        ACS = false;  // Deactivate ACS if no obstacle is detected
+void handleLoRaInput() {
+    while (LoRaSerial.available()) {
+        char c = LoRaSerial.read();
+        if (c == '\n') {
+            loraRxBuffer[loraRxPos] = '\0';
+            if (loraRxPos > 0) parseLoRaMessage(loraRxBuffer);
+            loraRxPos = 0;
+        } else if (c == '\r') {
+            // ignore
+        } else if (loraRxPos < (int)sizeof(loraRxBuffer) - 1) {
+            loraRxBuffer[loraRxPos++] = c;
+        } else {
+            loraRxPos = 0;
+        }
     }
 }
+#endif
 
 void setup() {
-    delay(5000);  // pour le serial monitor
-    setCpuFrequencyMhz(240);
-
     Serial.begin(115200);
-    Serial.println("\n-- PAMI test --\n");
-
-    lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
-    lidar->onReceive([]() {
-        if (!canStart) {
-            t_two = t_one;
-            t_one = tirette;                   // Update tirette state
-            tirette = lidar->isTiretteOn();    // Check if tirette is on
-            if (!(tirette || t_one || t_two))  // Check if tirette is on
-            {
-                // canStartTimer = true; // Set canStart to true if tirette is
-                // on
-                canStart = true;
-                Serial.println("Tirette activated, starting navigation.");
-            }
-            Serial.println("Waiting for tirette activation...");
-        } else {
-            lidarUpdate();  // Call lidar update function when data is received
-        }
-    });
-    Serial.println("LIDAR initialized");
-    delay(100);  // Wait for LIDAR to stabilize
-#if ENABLE_OTA
-    Serial.println("OTA enabled");
-    ota.begin();
-    server.begin();
-#endif
-#if ENABLE_LORA
-    isInit = com->begin(SS, RST, BUSY);
-    // initialize_callback_functions();
-    if (isInit) {
-        Serial.println("LoRa initialized");
-    } else {
-        Serial.println("[ERROR] LoRa initialization failed");
+    unsigned long serialWait = millis();
+    /*
+    while (!Serial && millis() - serialWait < 3000) {
+        delay(100);
     }
-#else
-    Serial.println("LoRa not enabled");
-#endif
-    // MovementTimer = timerBegin(0, 24000, true);                   // Create a
-    // timer with 8000 prescaler (80MHz / 8000 = 10kHz)
-    // timerAttachInterrupt(MovementTimer, &navigationUpdate, true); // Attach
-    // the interrupt function timerAlarmWrite(MovementTimer, 50, true); // Count
-    // to 100 in order to trigger the interrupt. (10kHz / 50 = 200Hz)
-    // timerAlarmEnable(MovementTimer);                              // Enable
-    // the timer interrupt
+        */
 
-    // create a second timer for lidar update
-    // lidarTimer = timerBegin(1, 24000, true);               // Create a second
-    // timer with 8000 prescaler timerAttachInterrupt(lidarTimer, &lidarUpdate,
-    // true); // Attach the interrupt function for lidar
-    // timerAlarmWrite(lidarTimer, 1000, true);              // Count to 1000 in
-    // order to trigger the interrupt. (10kHz / 1000 = 10Hz)
-    // timerAlarmEnable(lidarTimer);                         // Enable the lidar
-    // timer interrupt Serial.println("Setup complete, starting navigation...");
+    delay(2000);
+    DEBUG_PRINTLN("\n--- DEMARRAGE ---");
+
+#if ENABLE_LIDAR
+    lidar->begin();
+    xTaskCreatePinnedToCore(lidarTask, "lidar", 4096, lidar, 1, NULL, 0);
+    DEBUG_PRINTLN("Lidar task started on core 0");
+#endif
+
+    // Tirette couleur : lire avant le départ
+    pinMode(COLOR_PIN_VCC, OUTPUT);
+    digitalWrite(COLOR_PIN_VCC, HIGH);
+    pinMode(COLOR_PIN_READ, INPUT_PULLDOWN);
+
+    // Tirette: attendre qu'elle soit branchée puis retirée
+    pinMode(TIRETTE_PIN, INPUT_PULLDOWN);
+    DEBUG_PRINTLN("Attente tirette...");
+    // Attendre que la tirette soit connectée (pin HIGH)
+    while (digitalRead(TIRETTE_PIN) == LOW) {
+        delay(50);
+    }
+    DEBUG_PRINTLN("Tirette connectee, attente retrait...");
+    // Attendre que la tirette soit retirée (pin LOW)
+    while (digitalRead(TIRETTE_PIN) == HIGH) {
+        delay(50);
+    }
+    DEBUG_PRINTLN("Tirette retiree, GO!");
+
+#if ENABLE_OTA
+    ota.begin();
+#endif
+
+#if ENABLE_LORA
+    LoRaSerial.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
+    purgeLoRa();
+    Serial.println("LoRa: demande d'ID au Calcul Deporte...");
+    sendIdRequest();
+    while (myPamiId == -1) {
+        handleLoRaInput();
+        delay(10);
+    }
+    Serial.printf("LoRa: ID recu = %d, demarrage strategy.\n", myPamiId);
+#endif
+
+    // Lecture couleur : 0 = tirette, 1 = jaune forcé, -1 = bleu forcé
+    int colorInversion = COLOR_INVERSION;
+    if (colorInversion == 0) {
+        colorInversion = digitalRead(COLOR_PIN_READ) == HIGH ? 1 : -1;
+    }
+    DEBUG_PRINTF("Couleur: %s (%d)\n",
+                 colorInversion == 1 ? "JAUNE" : "BLEU", colorInversion);
+
+    if(ENABLE_HOMOLOGATION){
+        strategy->addAction(new Wait(5000));
+        strategy->addAction(new BlockingForward(rollingBasis, 400.0f));
+        strategy->addAction(new ActionneurSweep(SERVO_PIN, 25000));
+        strategy->start();
+    }else{
+        if(ENABLE_NINJA){
+            strategy->addAction(new Wait(2000));
+            strategy->addAction(new BlockingForward(rollingBasis, 5.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.48f));
+            strategy->addAction(new BlockingForward(rollingBasis, 17.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.70f));
+            strategy->addAction(new BlockingForward(rollingBasis, 75.0f));
+            strategy->addAction(new BlockingForward(rollingBasis, -100.0f));
+            strategy->addAction(new BlockingForward(rollingBasis, 15.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * 0.70f));
+            strategy->addAction(new BlockingForward(rollingBasis, 75.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.65f));
+            strategy->addAction(new BlockingForward(rollingBasis, 35.0f));
+            strategy->addAction(new ActionneurSweep(SERVO_PIN, 1000000));
+        }else{
+            strategy->addAction(new Wait(85000));
+            strategy->addAction(new BlockingForward(rollingBasis, 300.0f));
+            strategy->addAction(new BlockingTurn(rollingBasis, colorInversion * -0.75f));
+            strategy->addAction(new BlockingForward(rollingBasis, 230.0f));
+            strategy->addAction(new ActionneurSweep(SERVO_PIN, 1000000));
+        }
+        strategy->start();
+    }
+
+    strategyRunning = true;
 }
 
-long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
-    if (millis() - lastTime > 2 &&
-        canStart)  // Check if 2ms have passed since the last navigation update
-    {
-        navigationUpdate();  // Call navigation update function
-        lastTime = millis();
-    }
-    lidar->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
+
+    leftMotor->update();
+    rightMotor->update();
+
 #if ENABLE_LORA
-    if (isInit) {
-    }  // com->handle_callback(callback_functions);
-    else {
-        isInit = com->begin(SS, RST, BUSY);
-        if (isInit) {
-            Serial.println("LoRa re-initialized");
-        } else {
-            Serial.println("[ERROR] LoRa re-initialization failed");
-        }
+    handleLoRaInput();
+#endif
+
+    // Serial.printf("[Main loop] Pose: (%.1f, %.1f, %.3f) mm rad\n",
+    //               rollingBasis->getPose().x, rollingBasis->getPose().y,
+    //               rollingBasis->getPose().theta);
+
+    if (!strategyRunning) {
+        return;
     }
 
-#endif
+    if (millis() - lastStrategyUpdateMs >= 2) {
+        strategy->update();
+        lastStrategyUpdateMs = millis();
+    }
+
+    if (strategy->isFinished() && !strategyDoneLogged) {
+        DEBUG_PRINTLN("--- STRATEGY TERMINEE ---");
+        strategyRunning = false;
+        strategyDoneLogged = true;
+    }
 }

@@ -6,6 +6,12 @@
 #include <messages_pami.h>
 #include <cstring>  // To use memcpy()
 
+static constexpr size_t COM_MAX_MESSAGE_SIZE = 255;
+static constexpr size_t COM_FRAME_OVERHEAD =
+    6;  // size + crc + 4 signature bytes
+static constexpr size_t COM_MAX_FRAME_SIZE =
+    COM_MAX_MESSAGE_SIZE + COM_FRAME_OVERHEAD;
+
 /**
  * @brief Structure holding the last sent/received message contents.
  *
@@ -13,8 +19,8 @@
  * inspection. The fixed-size buffer mirrors the maximum expected message size.
  */
 struct last_message {
-    byte size;      ///< Size of the message in bytes
-    byte msg[256];  ///< Content of the message
+    byte size;                       ///< Size of the message in bytes
+    byte msg[COM_MAX_MESSAGE_SIZE];  ///< Content of the message
 };
 
 /**
@@ -72,7 +78,7 @@ class Com {
      *
      * @param text C-string to send
      */
-    void print(char* text);
+    void print(const char* text);
 
     /**
      * @brief Install a callback table invoked on message reception.
@@ -112,17 +118,16 @@ class Com {
     int preambleLength = 12;  // Preamble length
     bool crcType = true;      // CRC type
 
-    int message_len = 256;                        // Maximum message length
+    int message_len = COM_MAX_FRAME_SIZE;         // Maximum radio frame length
     uint16_t syncWord = 0x3444;                   // Sync word
     uint8_t headerType = SX126X_HEADER_EXPLICIT;  // Header type
 
-    byte* buffer = new byte[256];  // Internal buffer for storing received data
-    int pointer = 0;               // Pointer to the buffer
+    byte buffer[COM_MAX_FRAME_SIZE] = {};  // Internal receive buffer
+    size_t pointer = 0;                    // Pointer to the buffer
     byte signature[4];  // Signature used to validate messages (default:
                         // END_BYTES_SIGNATURE) initialized in the constructor
 
-    last_message* last_msg = new last_message();  // Pointer to the last sent
-                                                  // message for retransmission
+    last_message last_msg = {};  // Last sent message for retransmission
 };
 
 #endif

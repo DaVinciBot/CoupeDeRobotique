@@ -37,7 +37,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define SET_SPEED 3      // Message ID for Set speed parameter
 
 // Actuators
-#define SET_SERVO_ANGLE 3  // Message ID for Set servo angle
+#define SET_SERVO_ANGLE 4  // Message ID for Set servo angle
 
 // Common
 #define RESET_PAMI 126  // Message ID for Reset PAMI

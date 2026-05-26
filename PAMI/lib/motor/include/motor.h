@@ -49,7 +49,11 @@ class Motor {
           unsigned int stepsPerRevolution,
           unsigned int pulse_us,
           bool invertDirection = false);
-
+/**
+     * @brief Perform one step pulse (high-low toggle).
+     *
+     */
+    void _doOneStep();
     /**
      * @brief Destroy the Motor object
      *
@@ -103,6 +107,22 @@ class Motor {
      * next step timing and toggles the step pin when a step should occur.
      */
     void update();
+
+    /**
+     * @brief Emit exactly one step using a signed internal motor direction.
+     *
+     * This bypasses acceleration and speed ramping. It is intended for simple
+     * diagnostic moves where the requested number of STEP pulses matters.
+     *
+     * @param signedSpeedStepsPerSec Positive or negative value selecting the
+     * logical direction used by the existing step counter.
+     */
+    void stepOnceAtSignedSpeed(float signedSpeedStepsPerSec);
+
+    /**
+     * @brief Stop a diagnostic/manual stepping sequence immediately.
+     */
+    void stopManualStepping();
 
     /**
      * @brief Get the number of micro-steps per revolution.
@@ -161,11 +181,7 @@ class Motor {
      */
     void _setDirection(bool clockwise);
 
-    /**
-     * @brief Perform one step pulse (high-low toggle).
-     *
-     */
-    void _doOneStep();
+    
 };
 
 #endif

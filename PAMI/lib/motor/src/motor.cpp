@@ -39,15 +39,21 @@ void Motor::setTargetSpeed(float stepsPerSec) {
     if (_invertDirection) {
         stepsPerSec = -stepsPerSec;
     }
-    _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
-    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
-    enableMotor(_moving);
-    // Serial.print("_targetSpeedStepsPerSec = ");
-    // Serial.println(_targetSpeedStepsPerSec);
+
+    _targetSpeedStepsPerSec = stepsPerSec;
+
+    if (fabsf(_targetSpeedStepsPerSec) >= 1.0f) {
+        // CORRECTION : On ne réveille le moteur que s'il était à l'arrêt !
+        // Ça empêche le chrono de se faire réinitialiser en boucle.
+        if (!_moving) {
+            _moving = true;
+            enableMotor(true);
+        }
+    }
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
-    _acceleration = max(0.0f, stepsPerSec2 * 100.0f);
+    _acceleration = max(0.0f, stepsPerSec2);
 }
 
 void Motor::_setDirection(bool clockwise) {
@@ -74,7 +80,8 @@ void Motor::_doOneStep() {
 
 void Motor::update() {
     if (!_moving) {
-        Serial.println("Motor not moving");
+        // Serial.println("Motor not moving");
+
         return;
     }
 
@@ -85,7 +92,7 @@ void Motor::update() {
     float speedDiff = _acceleration * dtSec;
     // Serial.println(speedDiff);
 
-    if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
+    if (fabsf(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
     } else if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec) {
         _currentSpeedStepsPerSec += speedDiff;
@@ -95,10 +102,10 @@ void Motor::update() {
     // Serial.print("_currentSpeedStepsPerSec =");
     // Serial.println(_currentSpeedStepsPerSec);
 
-    if (fabs(_currentSpeedStepsPerSec) < 1.0f) {
+    if (fabsf(_currentSpeedStepsPerSec) < 1.0f) {
         _usDelayBetweenStep = 1e6f;
     } else {
-        _usDelayBetweenStep = (1e6f) / fabs(_currentSpeedStepsPerSec);
+        _usDelayBetweenStep = (1e6f) / fabsf(_currentSpeedStepsPerSec);
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
@@ -113,13 +120,36 @@ void Motor::update() {
         _doOneStep();
     }
 
-    if (fabs(_targetSpeedStepsPerSec) < 1.0f &&
-        fabs(_currentSpeedStepsPerSec) < 1.0f) {
+    if (fabsf(_targetSpeedStepsPerSec) < 1.0f &&
+        fabsf(_currentSpeedStepsPerSec) < 1.0f) {
         _moving = false;
         enableMotor(false);
     }
 
     _lastUpdateTime = now;
+}
+
+void Motor::stepOnceAtSignedSpeed(float signedSpeedStepsPerSec) {
+    if (fabsf(signedSpeedStepsPerSec) < 1.0f) {
+        return;
+    }
+
+    if (!_moving) {
+        _moving = true;
+        enableMotor(true);
+    }
+
+    _targetSpeedStepsPerSec = signedSpeedStepsPerSec;
+    _currentSpeedStepsPerSec = signedSpeedStepsPerSec;
+    _setDirection(_currentSpeedStepsPerSec >= 0.0f);
+    _doOneStep();
+}
+
+void Motor::stopManualStepping() {
+    _targetSpeedStepsPerSec = 0.0f;
+    _currentSpeedStepsPerSec = 0.0f;
+    _moving = false;
+    enableMotor(false);
 }
 
 bool Motor::isMoving() const {

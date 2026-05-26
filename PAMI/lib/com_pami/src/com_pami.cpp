@@ -2,10 +2,8 @@
 
 Com::Com() {
     memcpy(this->signature, END_BYTES_SIGNATURE, sizeof(this->signature));
-
-    // Initialize the buffer
-    for (uint16_t k = 0; k < 256; k++)
-        this->buffer[k] = 0;
+    memset(this->buffer, 0, sizeof(this->buffer));
+    this->last_msg.size = 0;
 }
 
 Com::~Com() {}
@@ -41,11 +39,16 @@ bool Com::begin(int8_t nss, int8_t reset, int8_t busy) {
 byte Com::handle() {
     while (LoRa.available()) {
         byte data = LoRa.read();
+        if (this->pointer >= sizeof(this->buffer)) {
+            Serial.println("[Com] RX buffer overflow, dropping frame");
+            this->pointer = 0;
+        }
+
         this->buffer[this->pointer++] = data;
 
         // Wait until at least 6 bytes are received
         if (this->pointer < 6)
-            break;
+            continue;
 
         // Check for signature validity
         bool is_signature = true;
@@ -58,10 +61,14 @@ byte Com::handle() {
 
         // Extract message size
         byte msg_size = this->buffer[pointer - 6];
+        if (msg_size == 0 || msg_size > COM_MAX_MESSAGE_SIZE) {
+            this->pointer = 0;
+            continue;
+        }
 
         if (this->pointer >= msg_size + 6) {
             CRC crc;
-            byte crc_b = crc.digest(this->buffer, msg_size + 1);
+            byte crc_b = crc.digest(this->buffer, size_t(msg_size) + 1);
 
             // Validate CRC
             if (crc_b != this->buffer[msg_size + 1]) {
@@ -101,9 +108,8 @@ void Com::handle_callback(void (*functions[256])(byte* msg, byte size)) {
                               size);  // Call the function
         } else if (msg_id == NACK) {
             // Resend the last message in case of NACK
-            if (this->last_msg != nullptr) {
-                this->send_msg((byte*)&this->last_msg->msg,
-                               this->last_msg->size, true);
+            if (this->last_msg.size > 0) {
+                this->send_msg(this->last_msg.msg, this->last_msg.size, true);
             }
         } else {
             // Handle unknown message types
@@ -126,25 +132,30 @@ byte* Com::read_buffer() {
 }
 
 void Com::send_msg(byte* msg, byte size, bool is_nack) {
-    if (!is_nack)
-        free(this->last_msg);
+    if (msg == nullptr || size == 0) {
+        Serial.println("[Com] Refusing to send empty/null message");
+        return;
+    }
 
-    this->last_msg = new last_message();
-    this->last_msg->size = size;
+    if (size > COM_MAX_MESSAGE_SIZE) {
+        Serial.println("[Com] Refusing to send oversized message");
+        return;
+    }
+
+    if (!is_nack) {
+        this->last_msg.size = size;
+        memcpy(this->last_msg.msg, msg, size);
+    }
 
     CRC crc;
 
     // Prepare the full message with size and CRC
-    byte* full_msg = new byte[size + 1];
-    for (byte i = 0; i < size; i++) {
-        full_msg[i] = msg[i];
-        if (!is_nack)
-            last_msg->msg[i] = msg[i];
-    }
+    byte full_msg[COM_MAX_MESSAGE_SIZE + 1];
+    memcpy(full_msg, msg, size);
     full_msg[size] = size;
 
     // Compute CRC
-    byte crc_b = crc.digest(full_msg, size + 1);
+    byte crc_b = crc.digest(full_msg, size_t(size) + 1);
 
     // Send the message
     LoRa.beginPacket();
@@ -154,17 +165,19 @@ void Com::send_msg(byte* msg, byte size, bool is_nack) {
     LoRa.endPacket();
     LoRa.wait();
 
-    free(full_msg);
     LoRa.request();  // Request for receiving new LoRa packet
 }
 
-void Com::print(char* text) {
-    // Use send_msg to send the text input
-    byte* msg = new byte[strlen(text) + 2];
-    msg[0] = PRINT;
-    for (byte i = 0; i <= strlen(text); i++) {
-        msg[i + 1] = text[i];
+void Com::print(const char* text) {
+    if (text == nullptr) {
+        return;
     }
-    this->send_msg(msg, strlen(text) + 3);
-    free(msg);
+
+    size_t text_len = strlen(text);
+    size_t copy_len = min(text_len, COM_MAX_MESSAGE_SIZE - 2);
+    byte msg[COM_MAX_MESSAGE_SIZE];
+    msg[0] = PRINT;
+    memcpy(&msg[1], text, copy_len);
+    msg[copy_len + 1] = '\0';
+    this->send_msg(msg, byte(copy_len + 2));
 }

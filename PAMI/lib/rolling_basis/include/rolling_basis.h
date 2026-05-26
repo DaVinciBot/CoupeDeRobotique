@@ -30,6 +30,13 @@
  */
 class RollingBasis {
    public:
+    typedef bool (*PauseCheckFn)();
+
+    void moveForwardBlocking(float distanceMm,
+                             PauseCheckFn shouldPause = nullptr);
+    void moveForwardStepsBlocking(long steps,
+                                  PauseCheckFn shouldPause = nullptr);
+    void turnBlocking(float angleRad);
     /**
      * @brief Enumeration representing the different phases of motion.
      *
@@ -129,6 +136,16 @@ class RollingBasis {
      */
     float getAngularSpeedRadPerS() const;
 
+    /**
+     * @brief Get pointer to left motor
+     */
+    Motor* getLeftMotor() const { return _leftMotor; }
+
+    /**
+     * @brief Get pointer to right motor
+     */
+    Motor* getRightMotor() const { return _rightMotor; }
+
    private:
     // void _computeOdometry(float dt);
     // void _applyControl(float dt);
@@ -154,10 +171,13 @@ class RollingBasis {
      * circumference.
      */
     void _sendWheelSpeeds(float v, float w);
+    float _stepsToWheelDistanceMm(long steps, const Motor* motor) const;
+    float _phaseLinearTravelMm() const;
+    float _phaseAngularTravelRad() const;
 
-    Motor* _leftMotor;       // Pointer to the left motor
-    Motor* _rightMotor;      // Pointer to the right motor
-    float _wheelDiameterMm;  // Wheel diameter in millimeters
+    Motor* _leftMotor;            // Pointer to the left motor
+    Motor* _rightMotor;           // Pointer to the right motor
+    float _wheelCircumferenceMm;  // Wheel circumference in millimeters
     float _wheelBaseMm;  // Distance between wheels (track width) in millimeters
 
     // long _prevLeftSteps;   // Previous left motor steps
@@ -176,6 +196,11 @@ class RollingBasis {
      * Stored as float for convenience when multiplying with durations/speeds.
      */
     float _rotateDirection;
+    float _targetDTheta;  // Target angle change (radians) AFTER calibration -
+                          // used for odometry
+    float _targetDistanceMm;
+    long _phaseStartLeftSteps;
+    long _phaseStartRightSteps;
     // Start time of the current phase
     unsigned long _startTime;
 };

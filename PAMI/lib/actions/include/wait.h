@@ -1,13 +1,11 @@
-#ifndef ACTIONS_FAKE_ACTION_H
-#define ACTIONS_FAKE_ACTION_H
+#ifndef ACTIONS_WAIT_H
+#define ACTIONS_WAIT_H
 
 #include "action.h"
-#include "rolling_basis.h"
 
-class FakeAction : public Action {
+class Wait : public Action {
    public:
-    FakeAction(RollingBasis* rb);
-    ~FakeAction() = default;
+    Wait(unsigned long durationMs);
 
     void start() override;
     void update() override;
@@ -16,7 +14,9 @@ class FakeAction : public Action {
     const char* name() const override;
 
    private:
-    RollingBasis* _rb;
+    unsigned long _durationMs;
+    unsigned long _startMs = 0;
+    bool _finished = false;
 };
 
 #endif
