@@ -1,0 +1,74 @@
+{
+  "folders": [
+    {
+      "path": "jetson/"
+    }
+  ],
+  "settings": {
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "clangd.enable": false,
+    "editor.codeActionsOnSave": {
+      "source.convertImportFormat": "explicit",
+      "source.organizeImports": "explicit",
+      "source.sort.json": "explicit",
+      "source.unusedImports": "explicit"
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "todo-tree.general.tagGroups": {
+      "FIXME": ["FIXME", "FIXIT", "FIX"],
+      "HACK": ["HACK", "ENHANCE"]
+    },
+    "todo-tree.general.tags": [
+      "BUG",
+      "HACK",
+      "ENHANCE",
+      "FIXME",
+      "FIXIT",
+      "FIX",
+      "QUESTION",
+      "TODO",
+      "TOTEST",
+      "UNUSED",
+      "[ ]",
+      "[x]"
+    ],
+    "todo-tree.highlights.customHighlight": {
+      "BUG": {
+        "background": "white",
+        "foreground": "red",
+        "textDecoration": "underline"
+      },
+      "FIXME": {
+        "foreground": "orange",
+        "iconColour": "yellow"
+      },
+      "QUESTION": {
+        "foreground": "purple",
+        "icon": "question",
+        "iconColour": "purple"
+      },
+      "TODO": {
+        "foreground": "cyan"
+      },
+      "TOTEST": {
+        "foreground": "lime",
+        "icon": "codescan-checkmark"
+      },
+      "UNUSED": {
+        "foreground": "grey",
+        "icon": "eye-closed",
+        "iconColour": "grey"
+      }
+    },
+    "todo-tree.highlights.defaultHighlight": {
+      "gutterIcon": true,
+      "type": "text-and-comment"
+    }
+  }
+}
