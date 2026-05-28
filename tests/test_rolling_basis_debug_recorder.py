@@ -1,5 +1,7 @@
 """Tests for rolling basis offline debug recorder."""
 
+# pylint: disable=missing-function-docstring
+
 from __future__ import annotations
 
 import csv
@@ -55,7 +57,7 @@ def test_recorder_exports_static_artifacts(tmp_path) -> None:
     assert rows[1]["event"] == "odometry_update"
     assert rows[1]["target_linear_cm_s"] == "10.0"
     assert rows[1]["actual_linear_cm_s"] == "9.0"
-    assert rows[1]["left_pwm"] == ""
+    assert not rows[1]["left_pwm"]
 
     live_snapshot = recorder.get_live_snapshot()
     assert live_snapshot["sample_count"] == 2

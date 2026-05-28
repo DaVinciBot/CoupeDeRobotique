@@ -14,7 +14,7 @@ from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 from a_config_loader import CONFIG
 from arena.base_arena.arena_zones import AllyZone
 from arena.winter_arena import WinterArena
-from brains import MainBrain
+from brains.main_brain import MainBrain
 from geometry import OrientedPoint
 from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy, UltrasonicDistanceSensor
@@ -209,7 +209,7 @@ if __name__ == "__main__":
     if "-i" in args_launch:
         logger_brain.info("Opening iihm...")
         try:
-            subprocess.Popen([
+            subprocess.Popen([  # pylint: disable=consider-using-with
                 "chromium",
                 "--no-sandbox",
                 "/home/dvb/CoupeDeRobotique/robot1/rasp/WebUI/index.html",

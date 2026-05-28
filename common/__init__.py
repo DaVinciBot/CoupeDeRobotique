@@ -16,12 +16,12 @@ Public API: `arena`, `geometry`, `gpio`, `led_strip`, `log_manager`, `navigation
 `strategy`, `teensy`, `usb_com`, `utils`, `video`.
 """
 
-from . import (  # pylint: disable=import-self
+from common import (  # pylint: disable=import-self
     arena,
     geometry,
     gpio,
     led_strip,
-    log_manager,
+    # log_manager,
     navigation,
     strategy,
     teensy,
@@ -35,7 +35,7 @@ __all__ = [
     "geometry",
     "gpio",
     "led_strip",
-    "log_manager",
+    # "log_manager",
     "navigation",
     "strategy",
     "teensy",
