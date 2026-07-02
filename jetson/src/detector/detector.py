@@ -670,7 +670,11 @@ class ArucoDetector:
                 # Dessiner la caisse comme un rectangle réaliste
                 crate_color = crate_colors[mid]
                 transform = (
-                    mtransforms.Affine2D().rotate_around(x_mm, y_mm, yaw)
+                    mtransforms.Affine2D().rotate_around(
+                        x_mm,
+                        y_mm,
+                        yaw + math.pi / 2.0,
+                    )
                     + self._arena_ax.transData
                 )
 
@@ -794,7 +798,8 @@ class ArucoDetector:
                     or img_bgr.shape[0] != ARENA_RENDER_H
                 ):
                     img_bgr = cv2.resize(
-                        img_bgr, (ARENA_RENDER_W, ARENA_RENDER_H),
+                        img_bgr,
+                        (ARENA_RENDER_W, ARENA_RENDER_H),
                     )
                     img_bgr = np.ascontiguousarray(img_bgr)
                 writer.write(img_bgr)
@@ -954,7 +959,9 @@ class ArucoDetector:
             if ds > 1.0:
                 new_w = int(gray.shape[1] / ds)
                 new_h = int(gray.shape[0] / ds)
-                gray_det = cv2.resize(gray, (new_w, new_h), interpolation=cv2.INTER_AREA)
+                gray_det = cv2.resize(
+                    gray, (new_w, new_h), interpolation=cv2.INTER_AREA
+                )
             else:
                 gray_det = gray
         mark(f"preproc+downscale x{ds:.1f}")
