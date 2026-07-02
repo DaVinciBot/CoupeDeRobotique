@@ -28,7 +28,7 @@ import numpy as np
 from dotenv import load_dotenv
 from src.arena import arena_elements
 from src.camera import CSICamera
-from src.detector import ArucoDetector
+from src.detector import ARENA_RENDER_H, ARENA_RENDER_W, ArucoDetector
 from src.game import MatchState
 from src.lora.lora import LoRa
 from src.utils.display import make_display_writer
@@ -673,8 +673,30 @@ def detect_aruco() -> None:
                     "⚠️  Aucun sink GStreamer"
                     " disponible pour l'affichage",
                 )
-    if HAS_DISPLAY and SHOW_ARENA:
-        cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
+    # Affichage de l'arène 2D. Comme le flux caméra, cv2.imshow ne marche
+    # pas sur cette Jetson : on route donc l'arène par un sink GStreamer
+    # (nv3dsink/xvimagesink) quand HAS_DISPLAY est faux.
+    arena_gst_writer = None
+    if SHOW_ARENA:
+        if HAS_DISPLAY:
+            cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
+        else:
+            arena_gst_writer = make_display_writer(
+                ARENA_RENDER_W,
+                ARENA_RENDER_H,
+                GST_DISPLAY_FPS,
+                render_width=ARENA_RENDER_W,
+                render_height=ARENA_RENDER_H,
+            )
+            if arena_gst_writer is None:
+                print(
+                    "⚠️  Aucun sink GStreamer"
+                    " disponible pour l'affichage de l'arène",
+                )
+            else:
+                active_detector = detector or arena_detector
+                if active_detector is not None:
+                    active_detector.arena_display_writer = arena_gst_writer
 
     # Historique des positions robots pour le calcul de vitesse
     robot_position_history = {
@@ -843,6 +865,8 @@ def detect_aruco() -> None:
             cv2.destroyAllWindows()
         if gst_writer is not None:
             gst_writer.release()
+        if arena_gst_writer is not None:
+            arena_gst_writer.release()
         if lora is not None:
             lora.stop()
             lora.disconnect()

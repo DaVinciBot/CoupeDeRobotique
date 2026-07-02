@@ -35,6 +35,11 @@ aire_and_elements_ids = list(range(11, 51))
 blue_reserve_ids = list(range(51, 71))
 yellow_reserve_ids = list(range(71, 91))
 
+# Dimensions du rendu de l'arène (figsize=(10, 7) @ dpi=100 → 1000x700).
+# Doit correspondre au writer GStreamer créé côté main.py.
+ARENA_RENDER_W = 1000
+ARENA_RENDER_H = 700
+
 
 class ArucoDetector:
     """Classe de détection et de localisation des marqueurs ArUco."""
@@ -62,6 +67,10 @@ class ArucoDetector:
         self._arena_fig = None
         self._arena_ax = None
         self._arena_canvas = None
+        # Sink GStreamer optionnel pour afficher l'arène quand cv2.imshow
+        # ne fonctionne pas (Jetson sans GTK). Si None, on retombe sur
+        # cv2.imshow. Dimensions attendues : ARENA_RENDER_W x ARENA_RENDER_H.
+        self.arena_display_writer = None
 
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
         if hasattr(cv2.aruco, "DetectorParameters_create"):
@@ -480,6 +489,7 @@ class ArucoDetector:
         detected_world=None,
         arrow_len_mm=300.0,
         window_name="Arena",
+        display_writer=None,
     ):
         import matplotlib.lines as mlines
         import matplotlib.pyplot as plt
@@ -775,7 +785,21 @@ class ArucoDetector:
             img_rgba = np.asarray(buf)
             img_bgr = cv2.cvtColor(img_rgba, cv2.COLOR_RGBA2BGR)
             img_bgr = np.ascontiguousarray(img_bgr)
-            cv2.imshow(window_name, img_bgr)
+            writer = display_writer or self.arena_display_writer
+            if writer is not None:
+                # Le sink GStreamer attend exactement ARENA_RENDER_W x
+                # ARENA_RENDER_H ; on redimensionne si le rendu diffère.
+                if (
+                    img_bgr.shape[1] != ARENA_RENDER_W
+                    or img_bgr.shape[0] != ARENA_RENDER_H
+                ):
+                    img_bgr = cv2.resize(
+                        img_bgr, (ARENA_RENDER_W, ARENA_RENDER_H),
+                    )
+                    img_bgr = np.ascontiguousarray(img_bgr)
+                writer.write(img_bgr)
+            else:
+                cv2.imshow(window_name, img_bgr)
         except Exception:
             pass
 
